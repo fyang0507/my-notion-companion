@@ -81,3 +81,8 @@ target/
 # IPython
 profile_default/
 ipython_config.py
+
+# connected database names
+# follow https://python.langchain.com/docs/integrations/document_loaders/notiondb to retrieve
+.notion_databases.toml
+.tokens.toml
