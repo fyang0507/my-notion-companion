@@ -89,3 +89,7 @@ ipython_config.py
 
 # vector database
 database/
+# data folder
+data/
+
+.DS_Store
