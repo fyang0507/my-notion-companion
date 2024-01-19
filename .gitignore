@@ -86,3 +86,6 @@ ipython_config.py
 # follow https://python.langchain.com/docs/integrations/document_loaders/notiondb to retrieve
 .notion_databases.toml
 .tokens.toml
+
+# vector database
+database/
