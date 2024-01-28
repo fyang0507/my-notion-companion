@@ -25,8 +25,5 @@ llm.invoke("介绍一下孔子，200字以内。")
 # yi-chat-6b.Q4_K_M.gguf
 # Qwen-7B-Chat.Q4_K_M.gguf
 # baichuan2-7b-chat.Q4_K_S.gguf
+# zephyr-7b-beta.Q4_K_M.gguf
 # chinese-alpaca-2-7b-q4_0.gguf # don't fucking use it, trash
-
-
-# to be verified:
-
