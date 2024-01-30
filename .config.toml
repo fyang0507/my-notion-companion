@@ -1,0 +1,10 @@
+model_path = '/Users/fred/Documents/models'
+
+
+# LLM params
+# ref: https://python.langchain.com/docs/guides/local_llms
+llm.n_gpu_layers = 1 # number of layer to be loaded in GPU. 1 is often sufficient
+llm.n_batch = 512 # batch size, number of tokens the model should process in parallel, should be between 1 and n_ctx, depend on the amount of RAM of Apple Silicon Chip.
+llm.n_ctx = 2048 # context size
+llm.temperature = 0.0
+llm.f16_kv = true # Metal only supports True. Used to be a bug, see https://github.com/langchain-ai/langchain/pull/3320#issue-1679133618
