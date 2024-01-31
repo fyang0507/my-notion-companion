@@ -1,10 +1,23 @@
+# model path
 model_path = '/Users/fred/Documents/models'
+
+# model mapping
+model.'baichuan-inc/Baichuan-7B' = 'baichuan2-7b-chat.Q4_K_S.gguf'
+model.'hfl/chinese-alpaca-2-7b' = 'chinese-alpaca-2-7b-q4_0.gguf'
+model.'Qwen/Qwen-7B-Chat' = 'Qwen-7B-Chat.Q4_K_M.gguf'
+model.'01-ai/Yi-6B-Chat' = 'yi-chat-6b.Q4_K_M.gguf'
+# model.'BAAI/AquilaChat2-7B-16K' = 'AquilaChat2-7B-16K.Q4_0.gguf' # BUG: can't be loaded into llama.cpp
+model.'HuggingFaceH4/zephyr-7b-beta' = 'zephyr-7b-beta.Q4_K_M.gguf'
+
 
 
 # LLM params
 # ref: https://python.langchain.com/docs/guides/local_llms
+# ref: https://github.com/langchain-ai/langchain/blob/master/libs/community/langchain_community/llms/llamacpp.py
 llm.n_gpu_layers = 1 # number of layer to be loaded in GPU. 1 is often sufficient
 llm.n_batch = 512 # batch size, number of tokens the model should process in parallel, should be between 1 and n_ctx, depend on the amount of RAM of Apple Silicon Chip.
 llm.n_ctx = 2048 # context size
 llm.temperature = 0.0
 llm.f16_kv = true # Metal only supports True. Used to be a bug, see https://github.com/langchain-ai/langchain/pull/3320#issue-1679133618
+# customized
+llm.conversation.k_rounds = 5 # number of rounds of conversations to keep in memory 
