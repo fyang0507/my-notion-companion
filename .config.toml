@@ -10,7 +10,6 @@ model.'01-ai/Yi-6B-Chat' = 'yi-chat-6b.Q4_K_M.gguf'
 model.'HuggingFaceH4/zephyr-7b-beta' = 'zephyr-7b-beta.Q4_K_M.gguf'
 
 
-
 # LLM params
 # ref: https://python.langchain.com/docs/guides/local_llms
 # ref: https://github.com/langchain-ai/langchain/blob/master/libs/community/langchain_community/llms/llamacpp.py
@@ -21,3 +20,27 @@ llm.temperature = 0.0
 llm.f16_kv = true # Metal only supports True. Used to be a bug, see https://github.com/langchain-ai/langchain/pull/3320#issue-1679133618
 # customized
 llm.conversation.k_rounds = 5 # number of rounds of conversations to keep in memory 
+
+
+# Documents metadata
+# TODO: depend on the self-query results, maybe consider add Chinese description as well
+metadata.author.description = "THe author of the article."
+metadata.author.type = "string"
+
+metadata.date_start.description = "The date the article was created. In YYYY-MM-DD format."
+metadata.date_start.type = "string"
+
+metadata.date_end.description = "The date the article was completed. In YYYY-MM-DD format."
+metadata.date_end.type = "string"
+
+metadata.id.description = "The id of the text."
+metadata.id.type = "string"
+
+metadata.name.description = "The name of the article."
+metadata.name.type = "string"
+
+metadata.source.description = "The source of the article, representing the name of the Notion database it was retrieved"
+metadata.source.type = "string"
+
+metadata.tags.description = "The different tags for an article, can represent its genre, origination, or belonged series."
+metadata.tags.type = "string"
