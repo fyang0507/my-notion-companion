@@ -5,8 +5,9 @@ model_path = '/Users/fred/Documents/models'
 model.'baichuan-inc/Baichuan-7B' = 'baichuan2-7b-chat.Q4_K_S.gguf'
 model.'hfl/chinese-alpaca-2-7b' = 'chinese-alpaca-2-7b-q4_0.gguf'
 model.'Qwen/Qwen-7B-Chat' = 'Qwen-7B-Chat.Q4_K_M.gguf'
+model.'Qwen/Qwen1.5-7B-Chat' = 'qwen1_5-7b-chat-q4_0.gguf'
 model.'01-ai/Yi-6B-Chat' = 'yi-chat-6b.Q4_K_M.gguf'
-# model.'BAAI/AquilaChat2-7B-16K' = 'AquilaChat2-7B-16K.Q4_0.gguf' # BUG: can't be loaded into llama.cpp
+model.'BAAI/AquilaChat2-7B-16K' = 'AquilaChat2-7B-16K.Q4_0.gguf'
 model.'HuggingFaceH4/zephyr-7b-beta' = 'zephyr-7b-beta.Q4_K_M.gguf'
 
 
@@ -15,32 +16,31 @@ model.'HuggingFaceH4/zephyr-7b-beta' = 'zephyr-7b-beta.Q4_K_M.gguf'
 # ref: https://github.com/langchain-ai/langchain/blob/master/libs/community/langchain_community/llms/llamacpp.py
 llm.n_gpu_layers = 1 # number of layer to be loaded in GPU. 1 is often sufficient
 llm.n_batch = 512 # batch size, number of tokens the model should process in parallel, should be between 1 and n_ctx, depend on the amount of RAM of Apple Silicon Chip.
-llm.n_ctx = 2048 # context size
+llm.n_ctx = 4096 # context size, default is 2048, Qwen 1.5 support up to 32K
 llm.temperature = 0.0
 llm.f16_kv = true # Metal only supports True. Used to be a bug, see https://github.com/langchain-ai/langchain/pull/3320#issue-1679133618
 # customized
 llm.conversation.k_rounds = 5 # number of rounds of conversations to keep in memory 
 
 
-# Documents metadata
-# TODO: depend on the self-query results, maybe consider add Chinese description as well
-metadata.author.description = "THe author of the article."
-metadata.author.type = "string"
+# Documents attributes
+attributes.author.description = "本篇文章的作者"
+attributes.author.type = "string"
 
-metadata.date_start.description = "The date the article was created. In YYYY-MM-DD format."
-metadata.date_start.type = "string"
+attributes.date_start.description = "文章被创建的时间，格式是YYYY-MM-DD"
+attributes.date_start.type = "string"
 
-metadata.date_end.description = "The date the article was completed. In YYYY-MM-DD format."
-metadata.date_end.type = "string"
+attributes.date_end.description = "文章被完成的时间，格式是YYYY-MM-DD"
+attributes.date_end.type = "string"
 
-metadata.id.description = "The id of the text."
-metadata.id.type = "string"
+attributes.id.description = "文章的id"
+attributes.id.type = "string"
 
-metadata.name.description = "The name of the article."
-metadata.name.type = "string"
+attributes.name.description = "文章的名字"
+attributes.name.type = "string"
 
-metadata.source.description = "The source of the article, representing the name of the Notion database it was retrieved"
-metadata.source.type = "string"
+attributes.source.description = "文章的来源，这里的文章取自若干不同数据库"
+attributes.source.type = "string"
 
-metadata.tags.description = "The different tags for an article, can represent its genre, origination, or belonged series."
-metadata.tags.type = "string"
+attributes.tags.description = "文章的标签，可能代表它的风格、题材、来源，或者系列"
+attributes.tags.type = "string"
