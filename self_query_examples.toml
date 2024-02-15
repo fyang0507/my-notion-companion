@@ -1,25 +1,31 @@
 [[example]] # 1st example, showing preference to use LIKE and IN filter
 
 user_query = "人生有几个不捡？仅从“笑死”中找答案。"
-structured_request.query = "人生有几个不捡？"
-structured_request.filter = "or(like(\"source\",\"笑死\"), in(\"source\",\"笑死\"), like(\"tags\",\"笑死\"), in(\"tags\",\"笑死\"))"
+structured_request.query = "人生有几个不捡"
+structured_request.filter = "or(like(\"source\", \"笑死\"), in(\"source\", \"笑死\"), like(\"tags\", \"笑死\"), in(\"tags\", \"笑死\"))"
 
 
 [[example]] # 2nd example, can query one attributes with multiple queries
 
-user_query = "“我们之所以突然变得残暴”的后面是什么？请从三岛由纪夫的小说中寻找答案。"
+user_query = "请从三岛由纪夫的小说找到下文相关片段：“我们之所以突然变得残暴”的后面是什么？"
 structured_request.query = "我们之所以突然变得残暴"
-structured_request.filter = "or(like(\"tags\",\"三岛由纪夫\"), in(\"tags\",\"三岛由纪夫\"), like(\"author\",\"三岛由纪夫\"), in(\"author\",\"三岛由纪夫\"), like(\"tags\",\"小说\"), in(\"tags\",\"小说\")"
+structured_request.filter = "or(like(\"tags\", \"三岛由纪夫\"), in(\"tags\", \"三岛由纪夫\"), like(\"author\", \"三岛由纪夫\"), in(\"author\", \"三岛由纪夫\"), like(\"tags\", \"小说\"), in(\"tags\", \"小说\"))"
 
 
-[[example]] # 3rd example, use date filter with empty query
+[[example]] # 3rd example, strengthen the fuzzy match logic
+user_query = "《天使与昆虫》是哪位作家的作品？"
+structured_request.query = ""
+structured_request.filter = "or(like(\"tags\", \"天使与昆虫\"), in(\"tags\", \"天使与昆虫\"), like(\"name\", \"天使与昆虫\"), in(\"name\", \"天使与昆虫\"), like(\"source\", \"天使与昆虫\"), in(\"source\", \"天使与昆虫\"))"
+
+
+[[example]] # 4th example, use date filter with empty query
 
 user_query = "我在2019年到2022年间写过多少篇文章？"
 structured_request.query = "" # empty query
-structured_request.filter = "and(eq(\"source\",\"写作\"), gt(\"date_start\", \"2019-01-01\"), lt(\"date_end\", \"2022-12-31\"))"
+structured_request.filter = "and(eq(\"source\", \"写作\"), gt(\"date_start\", \"2019-01-01\"), lt(\"date_end\", \"2022-12-31\"))"
 
 
-[[example]] # 4th example，empty filters
+[[example]] # 5th example，empty filters for irrelevant questions
 
 user_query = "美国有多少个州？"
 structured_request.query = "" # empty query
