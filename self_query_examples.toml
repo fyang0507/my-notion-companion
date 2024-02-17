@@ -13,20 +13,27 @@ structured_request.filter = "or(like(\"tags\", \"三岛由纪夫\"), in(\"tags\"
 
 
 [[example]] # 3rd example, strengthen the fuzzy match logic
+
 user_query = "《天使与昆虫》是哪位作家的作品？"
 structured_request.query = ""
 structured_request.filter = "or(like(\"tags\", \"天使与昆虫\"), in(\"tags\", \"天使与昆虫\"), like(\"name\", \"天使与昆虫\"), in(\"name\", \"天使与昆虫\"), like(\"source\", \"天使与昆虫\"), in(\"source\", \"天使与昆虫\"))"
 
 
-[[example]] # 4th example, use date filter with empty query
+[[example]] # 4th example, more common use cases
 
+user_query = "本多是哪本小说中出现的人物？"
+structured_request.query = "本多"
+structured_request.filter = "or(like(\"source\", \"小说\"), in(\"source\", \"小说\"), like(\"tags\", \"小说\"), in(\"tags\", \"小说\"))"
+
+
+[[example]] # 5th example, use date filter with empty query
 user_query = "我在2019年到2022年间写过多少篇文章？"
 structured_request.query = "" # empty query
 structured_request.filter = "and(eq(\"source\", \"写作\"), gt(\"date_start\", \"2019-01-01\"), lt(\"date_end\", \"2022-12-31\"))"
 
 
-[[example]] # 5th example，empty filters for irrelevant questions
+# [[example]] # 6th example，empty filters for irrelevant questions
 
-user_query = "美国有多少个州？"
-structured_request.query = "" # empty query
-structured_request.filter = "NO_FILTER"
+# user_query = "美国有多少个州？"
+# structured_request.query = "" # empty query
+# structured_request.filter = "NO_FILTER"
