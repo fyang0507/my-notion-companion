@@ -26,27 +26,27 @@ structured_request.query = "天使与昆虫"
 structured_request.filter = "or(like(\"source\", \"天使与昆虫\"), like(\"tags\", \"天使与昆虫\"), like(\"name\", \"天使与昆虫\"))"
 
 
-[[example]]
+[[example]] # 4th example, strengthen the fuzzy match logic
 
 user_query = "道连是哪本小说中出现的人物？"
 structured_request.query = "道连"
 structured_request.filter = "or(like(\"source\", \"小说\"), like(\"tags\", \"小说\"), like(\"name\", \"小说\"))"
 
 
-[[example]] # 4th example, more common use cases
+[[example]] # 5th example, more common use cases
 
 user_query = "本多是王尔德笔下的人物吗？"
 structured_request.query = "本多"
 structured_request.filter = "or(like(\"source\", \"王尔德\"), like(\"tags\", \"王尔德\")， like(\"name\", \"王尔德\"), like(\"author\", \"王尔德\"))"
 
 
-[[example]] # 5th example, use date filter
+[[example]] # 6th example, use date filter
 user_query = "我在2019年到2022年间写过多少游记？"
 structured_request.query = "游记"
 structured_request.filter = "and(eq(\"source\", \"写作\"), gt(\"date_start\", 20190101), lt(\"date_start\", 20221231))"
 
 
-[[example]] # 6th example，empty filters for irrelevant questions
+[[example]] # 7th example，empty filters for irrelevant questions
 
 user_query = "美国有多少个州？"
 structured_request.query = "" # empty query
