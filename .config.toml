@@ -10,7 +10,6 @@ model.'01-ai/Yi-6B-Chat' = 'yi-chat-6b.Q4_K_M.gguf'
 model.'BAAI/AquilaChat2-7B-16K' = 'AquilaChat2-7B-16K.Q4_0.gguf'
 model.'HuggingFaceH4/zephyr-7b-beta' = 'zephyr-7b-beta.Q4_K_M.gguf'
 
-
 # LLM params
 # ref: https://python.langchain.com/docs/guides/local_llms
 # ref: https://github.com/langchain-ai/langchain/blob/master/libs/community/langchain_community/llms/llamacpp.py
@@ -27,10 +26,10 @@ llm.conversation.k_rounds = 5 # number of rounds of conversations to keep in mem
 attributes.author.description = "本篇文章的作者"
 attributes.author.type = "string"
 
-attributes.date_start.description = "文章被创建的时间，格式是YYYY-MM-DD"
+attributes.date_start.description = "文章被创建的时间，格式是YYYYMMDD"
 attributes.date_start.type = "string"
 
-attributes.date_end.description = "文章被完成的时间，格式是YYYY-MM-DD"
+attributes.date_end.description = "文章被完成的时间，格式是YYYYMMDD"
 attributes.date_end.type = "string"
 
 attributes.id.description = "文章的id"
@@ -44,3 +43,24 @@ attributes.source.type = "string"
 
 attributes.tags.description = "文章的标签，可能代表它的风格、题材、来源，或者系列"
 attributes.tags.type = "string"
+
+# connection to redis standalone at localhost, db 0, no password
+redis_url = "redis://localhost:6379"
+index_name = "notiondb"
+
+# vectorstore schema (required by Redis)
+[[redis_schema.text]]
+name = "author"
+[[redis_schema.text]]
+name = "id"
+[[redis_schema.text]]
+name = "name"
+[[redis_schema.text]]
+name = "source"
+[[redis_schema.text]]
+name = "tags"
+
+[[redis_schema.numeric]]
+name = "date_start"
+[[redis_schema.numeric]]
+name = "date_end"
