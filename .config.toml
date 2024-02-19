@@ -1,14 +1,17 @@
 # model path
 model_path = '/Users/fred/Documents/models'
 
+# model name
+model_name = 'Qwen/Qwen-7B-Chat'
+
 # model mapping
-model.'baichuan-inc/Baichuan-7B' = 'baichuan2-7b-chat.Q4_K_S.gguf'
-model.'hfl/chinese-alpaca-2-7b' = 'chinese-alpaca-2-7b-q4_0.gguf'
-model.'Qwen/Qwen-7B-Chat' = 'Qwen-7B-Chat.Q4_K_M.gguf'
-model.'Qwen/Qwen1.5-7B-Chat' = 'qwen1_5-7b-chat-q4_0.gguf'
-model.'01-ai/Yi-6B-Chat' = 'yi-chat-6b.Q4_K_M.gguf'
-model.'BAAI/AquilaChat2-7B-16K' = 'AquilaChat2-7B-16K.Q4_0.gguf'
-model.'HuggingFaceH4/zephyr-7b-beta' = 'zephyr-7b-beta.Q4_K_M.gguf'
+model_mapping.'baichuan-inc/Baichuan-7B' = 'baichuan2-7b-chat.Q4_K_S.gguf'
+model_mapping.'hfl/chinese-alpaca-2-7b' = 'chinese-alpaca-2-7b-q4_0.gguf'
+model_mapping.'Qwen/Qwen-7B-Chat' = 'Qwen-7B-Chat.Q4_K_M.gguf'
+model_mapping.'Qwen/Qwen1.5-7B-Chat' = 'qwen1_5-7b-chat-q4_0.gguf'
+model_mapping.'01-ai/Yi-6B-Chat' = 'yi-chat-6b.Q4_K_M.gguf'
+model_mapping.'BAAI/AquilaChat2-7B-16K' = 'AquilaChat2-7B-16K.Q4_0.gguf'
+model_mapping.'HuggingFaceH4/zephyr-7b-beta' = 'zephyr-7b-beta.Q4_K_M.gguf'
 
 # LLM params
 # ref: https://python.langchain.com/docs/guides/local_llms
@@ -22,7 +25,23 @@ llm.f16_kv = true # Metal only supports True. Used to be a bug, see https://gith
 llm.conversation.k_rounds = 5 # number of rounds of conversations to keep in memory 
 
 
-# Documents attributes
+# embedding model
+embedding_model = "sentence-transformers/distiluse-base-multilingual-cased-v1"
+
+# enable contextual compressor
+enable_compressor = true
+
+# template and few-shot examples
+self_query.template = '../self_query_template.txt'
+self_query.examples = '../self_query_examples.toml'
+compressor.template = '../compressor_template.txt'
+
+# Document content: description of the documents
+# used in self-query
+content = "文章"
+
+# Documents attributes: description of attributes/metadata in the document
+# used in self-query
 attributes.author.description = "本篇文章的作者"
 attributes.author.type = "string"
 
