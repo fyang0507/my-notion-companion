@@ -13,8 +13,8 @@ model.'HuggingFaceH4/zephyr-7b-beta' = 'zephyr-7b-beta.Q4_K_M.gguf'
 # LLM params
 # ref: https://python.langchain.com/docs/guides/local_llms
 # ref: https://github.com/langchain-ai/langchain/blob/master/libs/community/langchain_community/llms/llamacpp.py
-llm.n_gpu_layers = 1 # number of layer to be loaded in GPU. 1 is often sufficient
-llm.n_batch = 512 # batch size, number of tokens the model should process in parallel, should be between 1 and n_ctx, depend on the amount of RAM of Apple Silicon Chip.
+llm.n_gpu_layers = 32 # number of layer to be loaded in GPU. can check n_layers to see the total layers of llm
+llm.n_batch = 2048 # batch size, number of tokens the model should process in parallel, should be between 1 and n_ctx, depend on the amount of RAM of Apple Silicon Chip.
 llm.n_ctx = 4096 # context size, default is 2048, Qwen 1.5 support up to 32K
 llm.temperature = 0.0
 llm.f16_kv = true # Metal only supports True. Used to be a bug, see https://github.com/langchain-ai/langchain/pull/3320#issue-1679133618
