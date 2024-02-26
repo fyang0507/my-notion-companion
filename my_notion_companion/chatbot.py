@@ -1,3 +1,4 @@
+import re
 from typing import Dict, Any
 
 from langchain_community.llms import LlamaCpp
@@ -62,10 +63,20 @@ When you don't know, say "I don't know." Avoid not replying at all. Please answe
 
         inputs = {"message": self.convert_message_to_llm_format(self.conversation)}
 
+        response = self.chain.invoke(inputs)
+
+        # Qwen has some weird compatibility issue with LlamaCpp such that it will generate EOS
+        # tokens like [PAD151645], [PAD151643], etc.
+        # ref: https://github.com/ggerganov/llama.cpp/issues/4331
+        if self.llm.name == "Qwen/Qwen-7B-Chat":
+            response = re.sub(
+                r"\[PAD[0-9]+\]([\s\w\W\S]*)", "", response
+            )  # trim anything beyond [PADxx]
+
         # invoke chain and format to Conversation-style response
         response = {
             "role": "assistant",
-            "content": self.chain.invoke(inputs),
+            "content": response,
         }
 
         # add response to memory
