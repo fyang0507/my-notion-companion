@@ -1,4 +1,3 @@
-import re
 from typing import Dict, Any
 
 from langchain_community.llms import LlamaCpp
@@ -7,9 +6,11 @@ from langchain.prompts import PromptTemplate
 from transformers import AutoTokenizer
 from transformers.pipelines.conversational import Conversation
 from langchain_core.prompt_values import StringPromptValue
+from utils import fix_qwen_padding
+from langchain_core.language_models.chat_models import BaseChatModel
 
 
-class ChatBot:
+class ChatBot(BaseChatModel):
     def __init__(self, llm: LlamaCpp, config: Dict[str, Any]):
 
         self.llm = llm
@@ -65,13 +66,8 @@ When you don't know, say "I don't know." Avoid not replying at all. Please answe
 
         response = self.chain.invoke(inputs)
 
-        # Qwen has some weird compatibility issue with LlamaCpp such that it will generate EOS
-        # tokens like [PAD151645], [PAD151643], etc.
-        # ref: https://github.com/ggerganov/llama.cpp/issues/4331
         if self.llm.name == "Qwen/Qwen-7B-Chat":
-            response = re.sub(
-                r"\[PAD[0-9]+\]([\s\w\W\S]*)", "", response
-            )  # trim anything beyond [PADxx]
+            response = fix_qwen_padding
 
         # invoke chain and format to Conversation-style response
         response = {

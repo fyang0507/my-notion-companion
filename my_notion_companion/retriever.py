@@ -16,6 +16,7 @@ from langchain.chains.query_constructor.prompt import (
     USER_SPECIFIED_EXAMPLE_PROMPT,
     SUFFIX_WITHOUT_DATA_SOURCE,
 )
+
 from langchain.retrievers.self_query.redis import RedisTranslator
 from langchain.retrievers import SelfQueryRetriever
 from langchain.chains.query_constructor.base import StructuredQueryOutputParser
@@ -23,6 +24,32 @@ from langchain.output_parsers.boolean import BaseOutputParser
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import LLMChainFilter
 from langchain_core.documents.base import Document
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough
+
+
+class BasicRetriever:
+    def __init__(
+        self,
+        llm: LlamaCpp,
+        config: Dict[str, Any],
+        token: Dict[str, str],
+    ) -> None:
+
+        # init embedding model
+        self.embedding_model = HuggingFaceInferenceAPIEmbeddings(
+            api_key=token["huggingface"], model_name=config["embedding_model"]
+        )
+        self.vs = Redis.from_existing_index(
+            embedding=self.embedding_model,
+            index_name=config["index_name"],
+            redis_url=config["redis_url"],
+            schema=config["redis_schema"],
+        )
+        self.retriever = self.vs.as_retriever()
+
+    def invoke(self, query):
+        return self.retriever.invoke(query)
 
 
 class SelfQueryAgent:
@@ -32,7 +59,6 @@ class SelfQueryAgent:
         llm: LlamaCpp,
         config: Dict[str, Any],
         token: Dict[str, str],
-        enable_compressor: bool = True,
     ) -> None:
 
         # init embedding model
@@ -50,11 +76,13 @@ class SelfQueryAgent:
 
         self.llm = llm
         self.config = config
+        self.enable_compressor = self.config["enable_compressor"]
 
         self._check_schema_definition()
 
         self.retriever = self.construct_retriever()
-        if self.config["enable_compressor"]:
+
+        if self.enable_compressor:
             self.compression_retriever = self.construct_compression_retriever()
 
     def _check_schema_definition(self) -> None:
@@ -187,7 +215,7 @@ class SelfQueryAgent:
         return compression_retriever
 
     def invoke(self, query: str) -> List[Document]:
-        if self.config["enable_compressor"]:
+        if self.enable_compressor:
             return self.compression_retriever.invoke(query)
         else:
             return self.retriever.invoke(query)
