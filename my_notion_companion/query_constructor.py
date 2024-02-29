@@ -1,10 +1,10 @@
 from typing import Dict, Any, List, Sequence, Union, Tuple
-from utils import fix_qwen_padding
+import tomllib
 
 from langchain_core.runnables import RunnableLambda
 from langchain_community.llms import LlamaCpp
-from langchain.prompts import PromptTemplate
 from transformers import AutoTokenizer
+from few_shot_constructor import FewShotTemplateConstructor
 
 
 class QueryConstructor:
@@ -21,23 +21,22 @@ class QueryConstructor:
             config["model_name"], trust_remote_code=True
         )
 
-        with open(self.config["template"]["query_constructor"], "r") as f:
-            query_constructor_template = "\n".join(f.readlines())
+        with open(self.config["template"]["query_constructor"], "rb") as f:
+            query_constructor_template = tomllib.load(f)
 
-        self.prompt = PromptTemplate(
-            template=query_constructor_template,
-            input_variables=["question"],
+        self.template = FewShotTemplateConstructor(
+            self.tokenizer, query_constructor_template
         )
 
-        self.chain = self.llm | RunnableLambda(fix_qwen_padding)
+        self.chain = (
+            RunnableLambda(self.template.invoke)
+            | self.llm
+            | RunnableLambda(self.clean_output)
+        )
+
+    @staticmethod
+    def clean_output(s: str) -> str:
+        return s.split("\n\n")[0]
 
     def invoke(self, query: str) -> str:
-        prompt_msg = self.prompt.invoke({"question": query}).to_string()
-        inputs = {
-            "role": "user",
-            "content": prompt_msg,
-        }
-        msg = self.tokenizer.apply_chat_template(
-            [inputs], tokenize=False, add_generation_prompt=True
-        )
-        return self.chain.invoke(msg)
+        return self.chain.invoke(query)

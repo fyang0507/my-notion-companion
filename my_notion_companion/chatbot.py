@@ -35,11 +35,7 @@ When you don't know, say "I don't know." Avoid not replying at all. Please answe
         self.conversation.add_message(self.sys_msg)
         self.full_history.add_message(self.sys_msg)
 
-        self.prompt = PromptTemplate.from_template("{message}")
-
-        self.chain = self.prompt | self.llm
-
-    def convert_message_to_llm_format(self, msg):
+    def convert_message_to_llm_format(self, msg: Conversation):
         # https://huggingface.co/docs/transformers/chat_templating
         return self.tokenizer.apply_chat_template(
             msg, tokenize=False, add_generation_prompt=True
@@ -62,9 +58,9 @@ When you don't know, say "I don't know." Avoid not replying at all. Please answe
         self.conversation.add_message(inputs)
         self.full_history.add_message(inputs)
 
-        inputs = {"message": self.convert_message_to_llm_format(self.conversation)}
+        inputs = self.convert_message_to_llm_format(self.conversation)
 
-        response = self.chain.invoke(inputs)
+        response = self.llm.invoke(inputs)
 
         if self.llm.name == "Qwen/Qwen-7B-Chat":
             response = fix_qwen_padding(response)
