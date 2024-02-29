@@ -2,7 +2,7 @@
 model_path = '/Users/fred/Documents/models'
 
 # model name
-model_name = 'Qwen/Qwen-7B-Chat'
+model_name = 'Qwen/Qwen1.5-7B-Chat'
 
 # model mapping
 model_mapping.'baichuan-inc/Baichuan-7B' = 'baichuan2-7b-chat.Q4_K_S.gguf'
@@ -22,7 +22,7 @@ llm.n_ctx = 4096 # context size, default is 2048, Qwen 1.5 support up to 32K
 llm.temperature = 0.0
 llm.f16_kv = true # Metal only supports True. Used to be a bug, see https://github.com/langchain-ai/langchain/pull/3320#issue-1679133618
 # customized
-llm.conversation.k_rounds = 5 # number of rounds of conversations to keep in memory 
+llm.conversation.k_rounds = 5 # number of rounds of conversations to keep in memory
 
 
 # embedding model
@@ -32,9 +32,10 @@ embedding_model = "sentence-transformers/distiluse-base-multilingual-cased-v1"
 enable_compressor = true
 
 # template and few-shot examples
-self_query.template = '../self_query_template.txt'
-self_query.examples = '../self_query_examples.toml'
-compressor.template = '../compressor_template.txt'
+template.query_constructor = '../query_constructor_template.txt'
+template.self_query = '../self_query_template.txt'
+example.self_query = '../self_query_examples.toml'
+template.compressor = '../compressor_template.txt'
 
 # Document content: description of the documents
 # used in self-query
