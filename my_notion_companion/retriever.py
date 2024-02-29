@@ -24,14 +24,11 @@ from langchain.output_parsers.boolean import BaseOutputParser
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import LLMChainFilter
 from langchain_core.documents.base import Document
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough
 
 
 class BasicRetriever:
     def __init__(
         self,
-        llm: LlamaCpp,
         config: Dict[str, Any],
         token: Dict[str, str],
     ) -> None:
@@ -136,10 +133,10 @@ class SelfQueryAgent:
 
     def construct_retriever(self):
 
-        with open(self.config["self_query"]["examples"], "rb") as f:
+        with open(self.config["example"]["self_query"], "rb") as f:
             self_query_examples = tomllib.load(f)
 
-        with open(self.config["self_query"]["template"], "r") as f:
+        with open(self.config["template"]["self_query"], "r") as f:
             self_query_template = "\n".join(f.readlines())
 
         prompt = self._get_self_query_prompt(self_query_template, self_query_examples)
@@ -200,7 +197,7 @@ class SelfQueryAgent:
 
     def construct_compression_retriever(self):
 
-        with open(self.config["compressor"]["template"], "r") as f:
+        with open(self.config["template"]["compressor"], "r") as f:
             compressor_template = "\n".join(f.readlines())
 
         compressor = LLMChainFilter.from_llm(

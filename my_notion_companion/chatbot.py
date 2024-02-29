@@ -10,7 +10,7 @@ from utils import fix_qwen_padding
 from langchain_core.language_models.chat_models import BaseChatModel
 
 
-class ChatBot(BaseChatModel):
+class ChatBot:
     def __init__(self, llm: LlamaCpp, config: Dict[str, Any]):
 
         self.llm = llm
@@ -67,7 +67,7 @@ When you don't know, say "I don't know." Avoid not replying at all. Please answe
         response = self.chain.invoke(inputs)
 
         if self.llm.name == "Qwen/Qwen-7B-Chat":
-            response = fix_qwen_padding
+            response = fix_qwen_padding(response)
 
         # invoke chain and format to Conversation-style response
         response = {
