@@ -32,7 +32,7 @@ embedding_model = "sentence-transformers/distiluse-base-multilingual-cased-v1"
 enable_compressor = true
 
 # template and few-shot examples
-template.query_constructor = '../query_constructor_template.txt'
+template.query_constructor = '../templates/query_constructor_template.toml'
 template.self_query = '../self_query_template.txt'
 example.self_query = '../self_query_examples.toml'
 template.compressor = '../compressor_template.txt'
