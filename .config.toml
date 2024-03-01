@@ -2,7 +2,7 @@
 model_path = '/Users/fred/Documents/models'
 
 # model name
-model_name = 'Qwen/Qwen1.5-7B-Chat'
+model_name = 'HuggingFaceH4/zephyr-7b-beta'
 
 # model mapping
 model_mapping.'baichuan-inc/Baichuan-7B' = 'baichuan2-7b-chat.Q4_K_S.gguf'
