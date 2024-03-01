@@ -36,10 +36,10 @@ class FewShotTemplateConstructor:
                 }
             )
 
-    def convert_message_to_llm_format(self, msg: Conversation):
+    def convert_message_to_llm_format(self, conversation: Conversation):
         # https://huggingface.co/docs/transformers/chat_templating
         return self.tokenizer.apply_chat_template(
-            msg, tokenize=False, add_generation_prompt=True
+            conversation, tokenize=False, add_generation_prompt=True
         )
 
     @staticmethod
@@ -64,3 +64,6 @@ class FewShotTemplateConstructor:
         for example in template["example"]:
             for key in ["user", "assistant"]:
                 assert key in example, f"missing key: {key} in {example}"
+
+    def to_string(self) -> str:
+        return self.convert_message_to_llm_format(self.history)

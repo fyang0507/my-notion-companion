@@ -1,10 +1,11 @@
 from typing import Dict, Any
 import tomllib
-
+from exceptions import QueryConstructorError
 from langchain_core.runnables import RunnableLambda
 from langchain_community.llms import LlamaCpp
 from transformers import AutoTokenizer
 from few_shot_constructor import FewShotTemplateConstructor
+from loguru import logger
 
 
 class QueryConstructor:
@@ -22,21 +23,44 @@ class QueryConstructor:
         )
 
         with open(self.config["template"]["query_constructor"], "rb") as f:
-            query_constructor_template = tomllib.load(f)
+            self.query_constructor_template = tomllib.load(f)
 
         self.template = FewShotTemplateConstructor(
-            self.tokenizer, query_constructor_template
+            self.tokenizer, self.query_constructor_template
         )
 
         self.chain = (
             RunnableLambda(self.template.invoke)
             | self.llm
             | RunnableLambda(self.clean_output)
+            | RunnableLambda(self.parse_output)
         )
 
     @staticmethod
     def clean_output(s: str) -> str:
-        return s.split("\n\n")[0]
+        return s.split("\n\n")[0].split("|")
+
+    def parse_output(self, s: str) -> Dict[str, str]:
+        try:
+            keywords = (
+                s[0]
+                .replace(self.query_constructor_template["keyword_prefix"], "")
+                .split(" ")
+            )
+            domain = (
+                s[1]
+                .replace(self.query_constructor_template["domain_prefix"], "")
+                .split(" ")
+            )
+            return {
+                "keywords": keywords,
+                "domain": domain,
+            }
+        except:
+            raise QueryConstructorError
 
     def invoke(self, query: str) -> str:
-        return self.chain.invoke(query)
+        try:
+            return self.chain.invoke(query)
+        except QueryConstructorError:
+            logger.error(f"Failed to construct query for the input: {query}")
