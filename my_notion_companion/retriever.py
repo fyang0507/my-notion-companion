@@ -24,6 +24,14 @@ from langchain.output_parsers.boolean import BaseOutputParser
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import LLMChainFilter
 from langchain_core.documents.base import Document
+from my_notion_companion.document_filter import DocumentFilter
+from my_notion_companion.query_constructor import QueryAnalyzer
+
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.retrievers import BM25Retriever
+import jieba
+
+from loguru import logger
 
 
 class BasicRetriever:
@@ -49,7 +57,47 @@ class BasicRetriever:
         return self.retriever.invoke(query)
 
 
-class SelfQueryAgent:
+class BM25SelfQueryRetriever:
+    def __init__(
+        self, llm: LlamaCpp, docs: List[Document], config: Dict[str, Any]
+    ) -> None:
+
+        self.llm = llm
+        self.config = config
+        self.docs = docs
+
+        self._split_docs()
+
+        self.doc_filter = DocumentFilter(self.splits, threshold=0.5)
+        self.query_analyzer = QueryAnalyzer(llm, config)
+
+    def _split_docs(self) -> None:
+        rc_splitter = RecursiveCharacterTextSplitter(**self.config["splitter"])
+        self.splits = rc_splitter.split_documents(self.docs)
+
+    def invoke(self, query: str) -> List[Document]:
+        query_formatted = self.query_constructor.invoke(query)
+        keywords: List[str] = query_formatted.get("keywords")
+        domains: List[str] = query_formatted.get("domains")
+
+        if len(domains) == 1 and domains[0] == "无":
+            logger.info("No filters found by query analyzer.")
+            splits = self.splits
+        else:
+            logger.info(f"filter found by query analyzer: {domains}")
+            splits = self.doc_filter.filter_multiple_criteria(domains, operand="OR")
+
+        splits_matched = list()
+        for k in keywords:
+            retriever = BM25Retriever.from_documents(
+                splits, preprocess_func=lambda x: jieba.lcut_for_search(x, HMM=False)
+            )
+            splits_matched.extend(retriever.invoke(k))
+
+        return splits_matched
+
+
+class RedisSelfQueryRetriever:
 
     def __init__(
         self,

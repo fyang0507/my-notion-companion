@@ -1,6 +1,5 @@
 from typing import Dict, Any
 import tomllib
-from exceptions import QueryConstructorError
 from langchain_core.runnables import RunnableLambda
 from langchain_community.llms import LlamaCpp
 from transformers import AutoTokenizer
@@ -8,7 +7,7 @@ from few_shot_constructor import FewShotTemplateConstructor
 from loguru import logger
 
 
-class QueryConstructor:
+class QueryAnalyzer:
     def __init__(
         self,
         llm: LlamaCpp,
@@ -44,17 +43,21 @@ class QueryConstructor:
         try:
             keywords = (
                 s[0]
-                .replace(self.query_constructor_template["keyword_prefix"], "")
-                .split(" ")
+                .replace(
+                    self.query_constructor_template["keyword_prefix"], ""
+                )  # remove prefix
+                .split(" ")  # keywords are separated with space
             )
-            domain = (
+            domains = (
                 s[1]
-                .replace(self.query_constructor_template["domain_prefix"], "")
-                .split(" ")
+                .replace(
+                    self.query_constructor_template["domain_prefix"], ""
+                )  # remove prefix
+                .split(" ")  # domains are separated with space
             )
             return {
                 "keywords": keywords,
-                "domain": domain,
+                "domains": domains,
             }
         except:
             raise QueryConstructorError
@@ -64,3 +67,9 @@ class QueryConstructor:
             return self.chain.invoke(query)
         except QueryConstructorError:
             logger.error(f"Failed to construct query for the input: {query}")
+
+
+class QueryConstructorError(RuntimeError):
+    """Can't construct query."""
+
+    pass
