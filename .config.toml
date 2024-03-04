@@ -37,6 +37,12 @@ template.self_query = '../self_query_template.txt'
 example.self_query = '../self_query_examples.toml'
 template.compressor = '../compressor_template.txt'
 
+# splitter
+# 1 Chinese characters = 2 english character
+# most paragraphs/sections are within 500 Chinese words/chars
+splitter.chunk_size = 500
+splitter.chunk_overlap = 50
+
 # Document content: description of the documents
 # used in self-query
 content = "文章"
