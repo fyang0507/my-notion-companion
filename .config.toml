@@ -24,6 +24,13 @@ llm.f16_kv = true # Metal only supports True. Used to be a bug, see https://gith
 # customized
 llm.conversation.k_rounds = 5 # number of rounds of conversations to keep in memory
 
+# BM25 retriever
+# no. of top docs to be returns
+# ref: https://github.com/langchain-ai/langchain/blob/master/libs/community/langchain_community/retrievers/bm25.py
+bm25.k = 5
+
+# Test cases directory
+test_path = '../data/test_cases.txt'
 
 # embedding model
 embedding_model = "sentence-transformers/distiluse-base-multilingual-cased-v1"
