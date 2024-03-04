@@ -12,10 +12,12 @@ class QueryAnalyzer:
         self,
         llm: LlamaCpp,
         config: Dict[str, Any],
+        verbose: bool = False,
     ) -> None:
 
         self.config = config
         self.llm = llm
+        self.verbose = verbose
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             config["model_name"], trust_remote_code=True
@@ -39,7 +41,7 @@ class QueryAnalyzer:
     def clean_output(s: str) -> str:
         return s.split("\n\n")[0].split("|")
 
-    def parse_output(self, s: str) -> Dict[str, str]:
+    def parse_output(self, s: str, verbose: bool = False) -> Dict[str, str]:
         try:
             keywords = (
                 s[0]
@@ -55,21 +57,24 @@ class QueryAnalyzer:
                 )  # remove prefix
                 .split(" ")  # domains are separated with space
             )
+
+            if self.verbose:
+                logger.info(
+                    f"\nQuery Analyzer output\nkeyword: {keywords}\nsearch domains:{domains}"
+                )
+
             return {
                 "keywords": keywords,
                 "domains": domains,
             }
         except:
-            raise QueryConstructorError
+            raise QueryConstructorException
 
     def invoke(self, query: str) -> str:
-        try:
-            return self.chain.invoke(query)
-        except QueryConstructorError:
-            logger.error(f"Failed to construct query for the input: {query}")
+        return self.chain.invoke(query)
 
 
-class QueryConstructorError(RuntimeError):
+class QueryConstructorException(BaseException):
     """Can't construct query."""
 
     pass

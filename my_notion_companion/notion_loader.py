@@ -21,32 +21,49 @@ class NotionLoader:
         self.data_raw = None
         self.data_formatted = None
 
-    def _load_db(self, db_name) -> List[Document]:
-        loader = NotionDBLoader(
-            integration_token=self._tokens["notion"],
-            database_id=self._notion_dbs[db_name],
-            request_timeout_sec=30,  # optional, defaults to 10
-        )
-        # to avoid concurrent request being sent
-        time.sleep(random.randrange(10) + 1)
-        data = loader.load()
-        return data
-
     def _load_databases(self) -> None:
         logger.info("Read from notion databases.")
-        e = ThreadPoolExecutor()
-        results = list(e.map(self._load_db, self._notion_dbs.keys()))
-        logger.info("Completed reading from notion")
-        self.data_raw = dict(zip(self._notion_dbs.keys(), results))
+        self.data_raw = {}
+
+        # this step could be parallelized
+        # however, it seems Notion API has imposed some rate limit, and when parallelized
+        # it is easy to get connection errors
+        for db_name, db_id in self._notion_dbs.items():
+            logger.info(f"retrieving from database: {db_name}")
+            loader = NotionDBLoader(
+                integration_token=self._tokens["notion"],
+                database_id=db_id,
+                request_timeout_sec=30,  # optional, defaults to 10
+            )
+
+            data = None
+            for i in range(3):
+                try:
+                    logger.info(
+                        f"trying {i+1} time, retrieving from database: {db_name}"
+                    )
+                    data = loader.load()
+                except:
+                    time.sleep(random.randrange(30) + 5)
+
+                if data:
+                    logger.info(f"completed retrieval from database: {db_name}")
+                    break
+
+            if data:
+                logger.info(f"completed retrieval all databases from Notion")
+                self.data_raw[db_name] = data
+            else:
+                raise RuntimeError(f"Failed to retrieve from database: {db_name}")
 
     def _format_data(self) -> None:
         """
         1. Transform raw data into a flattened list, adding database source as a metadata field "source"
         2. Process metadata fields
         """
-        docs_list = list()
+        self.data_formatted = list()
 
-        for db_name, docs in self.raw_data.items():
+        for db_name, docs in self.data_raw.items():
             for doc in docs:
                 # because our data are gathered from multiple databases
                 # we are going to throw the database names as one property
@@ -70,9 +87,7 @@ class NotionLoader:
                 if "tags" in doc.metadata:
                     doc.metadata["tags"] = ", ".join(doc.metadata["tags"])
 
-            docs_list.extend(docs)
-
-        self.data_formatted = docs_list
+            self.data_formatted.extend(docs)
 
     def load(self) -> List[Document]:
         self._load_databases()

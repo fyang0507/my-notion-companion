@@ -25,13 +25,17 @@ from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import LLMChainFilter
 from langchain_core.documents.base import Document
 from my_notion_companion.document_filter import DocumentFilter
-from my_notion_companion.query_constructor import QueryAnalyzer
+from my_notion_companion.query_analyzer import QueryAnalyzer
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.retrievers import BM25Retriever
 import jieba
 
+import re
 from loguru import logger
+from utils import load_test_cases
+from document_filter import NoMatchedDocException
+from query_analyzer import QueryConstructorException
 
 
 class BasicRetriever:
@@ -66,17 +70,26 @@ class BM25SelfQueryRetriever:
         self.config = config
         self.docs = docs
 
-        self._split_docs()
+        self._split_documents()
 
-        self.doc_filter = DocumentFilter(self.splits, threshold=0.5)
-        self.query_analyzer = QueryAnalyzer(llm, config)
+        self.doc_filter = DocumentFilter(self.splits, threshold=1.0)
+        self.query_analyzer = QueryAnalyzer(llm, config, verbose=True)
 
-    def _split_docs(self) -> None:
+    def _split_documents(self) -> None:
         rc_splitter = RecursiveCharacterTextSplitter(**self.config["splitter"])
         self.splits = rc_splitter.split_documents(self.docs)
 
-    def invoke(self, query: str) -> List[Document]:
-        query_formatted = self.query_constructor.invoke(query)
+    def _get_relevant_documents(
+        self, query: str, splits: List[Document]
+    ) -> List[Document]:
+        retriever = BM25Retriever.from_documents(
+            splits,
+            k=self.config["bm25"]["k"],
+            preprocess_func=lambda x: jieba.lcut_for_search(x, HMM=False),
+        )
+        return retriever.invoke(query)
+
+    def _filter_documents(self, query_formatted: Dict[str, str]) -> List[Document]:
         keywords: List[str] = query_formatted.get("keywords")
         domains: List[str] = query_formatted.get("domains")
 
@@ -85,16 +98,31 @@ class BM25SelfQueryRetriever:
             splits = self.splits
         else:
             logger.info(f"filter found by query analyzer: {domains}")
-            splits = self.doc_filter.filter_multiple_criteria(domains, operand="OR")
+            try:
+                splits = self.doc_filter.filter_multiple_criteria(domains, operand="OR")
+            except NoMatchedDocException:
+                logger.info(
+                    "No matched doc found based on query analyzer. Search all docs."
+                )
+                splits = self.splits
 
         splits_matched = list()
-        for k in keywords:
-            retriever = BM25Retriever.from_documents(
-                splits, preprocess_func=lambda x: jieba.lcut_for_search(x, HMM=False)
-            )
-            splits_matched.extend(retriever.invoke(k))
+        for keyword in keywords:
+            splits_matched.extend(self._get_relevant_documents(keyword, splits))
 
         return splits_matched
+
+    def invoke(self, query: str) -> List[Document]:
+        try:
+            query_formatted = self.query_analyzer.invoke(query)
+            splits_retrieved = self._filter_documents(query_formatted)
+        except QueryConstructorException:
+            logger.error(
+                f"Failed to construct query for the input: {query}, returning raw input."
+            )
+            splits_retrieved = self._retrieve_all(query)
+
+        return splits_retrieved
 
 
 class RedisSelfQueryRetriever:
@@ -303,3 +331,27 @@ class ChineseBooleanOutputParser(BaseOutputParser[bool]):
     def _type(self) -> str:
         """Snake-case string identifier for an output parser type."""
         return "customized_boolean_output_parser"
+
+
+class RetrieverEvaluator:
+    def __init__(self, config: Dict[str, Any]) -> None:
+        self.test_cases = load_test_cases(config["test_path"])
+
+    def evaluate(self, retriever):
+        score_list = list()
+
+        for case in self.test_cases:
+            docs_retrieved = retriever.invoke(case["q"])
+            for ref in case["docs"]:
+                score_list.append(self._match_chinese(ref, docs_retrieved))
+
+        logger.info(f"Test cases pass rate: {sum(score_list)/len(score_list):.3f}")
+        return score_list
+
+    @staticmethod
+    def _match_chinese(string_to_match: str, docs: List[Document]):
+        """Check whether Chinese characters in string_to_match appear in at least one doc."""
+        # find all chinese characters
+        # ref: https://stackoverflow.com/questions/2718196/find-all-chinese-text-in-a-string-using-python-and-regex
+        for tokens in re.findall(r"[\u4e00-\u9fff]+", string_to_match):
+            return any([tokens in x.page_content for x in docs])

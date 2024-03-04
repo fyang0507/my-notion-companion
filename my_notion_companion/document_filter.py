@@ -12,6 +12,7 @@ class DocumentFilter:
         threshold: float,
     ):
         assert threshold >= 0.0 and threshold <= 1.0, "threshold must be between [0,1]."
+        logger.info(f"Setting metadata fuzzy match threshold to: {threshold}.")
         self.threshold = threshold
         self.docs = docs
 
@@ -40,7 +41,9 @@ class DocumentFilter:
             logger.info(f"Remaining doc: {len(matched_list)/len(self.docs): .3f}")
             return matched_list
         else:
-            raise NoMatchedDocError("No matched docs based on input filter criteria.")
+            raise NoMatchedDocException(
+                "No matched docs based on input filter criteria."
+            )
 
     def filter_multiple_criteria(
         self, criteria: List[str], operand: str = "OR"
@@ -58,15 +61,17 @@ class DocumentFilter:
             for c in criteria:
                 result = self._find_match(c, self.docs)
                 is_matched = [x or y for x, y in zip(is_matched, result)]
-            docs = [x for x, i in zip(docs, is_matched) if i]
+            docs = [x for x, i in zip(self.docs, is_matched) if i]
 
         if not docs:
-            raise NoMatchedDocError("No matched docs based on input filter criteria.")
+            raise NoMatchedDocException(
+                "No matched docs based on input filter criteria."
+            )
 
         return docs
 
 
-class NoMatchedDocError(RuntimeError):
+class NoMatchedDocException(BaseException):
     """No matched docs based on input filter criteria."""
 
     pass
