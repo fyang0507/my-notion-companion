@@ -29,8 +29,14 @@ llm.conversation.k_rounds = 5 # number of rounds of conversations to keep in mem
 # ref: https://github.com/langchain-ai/langchain/blob/master/libs/community/langchain_community/retrievers/bm25.py
 bm25.k = 5
 
-# Test cases directory
-test_path = '../data/test_cases.txt'
+# directories
+path.tokens = '../.tokens.toml'
+path.notion_dbs = '../.notion_databases.toml'
+path.docs = '../data/notion.pkl'
+path.test_cases = '../data/test_cases.txt'
+
+# notion data pull
+force_repull = false
 
 # embedding model
 embedding_model = "sentence-transformers/distiluse-base-multilingual-cased-v1"
@@ -39,7 +45,9 @@ embedding_model = "sentence-transformers/distiluse-base-multilingual-cased-v1"
 enable_compressor = true
 
 # template and few-shot examples
-template.query_constructor = '../templates/query_constructor_template.toml'
+template.query_analyzer = '../templates/query_analyzer_template.toml'
+template.conversatoinal_rag = '../templates/conversational_rag_template.toml'
+
 template.self_query = '../self_query_template.txt'
 example.self_query = '../self_query_examples.toml'
 template.compressor = '../compressor_template.txt'
