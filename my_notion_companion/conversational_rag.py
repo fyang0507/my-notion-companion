@@ -1,13 +1,11 @@
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 
 from langchain_community.llms import LlamaCpp
-
+from langchain_core.documents.base import Document
+from langchain_core.prompt_values import StringPromptValue
 from transformers import AutoTokenizer
 from transformers.pipelines.conversational import Conversation
-from langchain_core.prompt_values import StringPromptValue
 from utils import fix_qwen_padding
-
-from langchain_core.documents.base import Document
 
 
 class ConversationalRAG:

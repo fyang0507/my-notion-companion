@@ -1,10 +1,11 @@
-from typing import Dict, Any
 import tomllib
-from langchain_core.runnables import RunnableLambda
-from langchain_community.llms import LlamaCpp
-from transformers import AutoTokenizer
+from typing import Any, Dict
+
 from few_shot_constructor import FewShotTemplateConstructor
+from langchain_community.llms import LlamaCpp
+from langchain_core.runnables import RunnableLambda
 from loguru import logger
+from transformers import AutoTokenizer
 
 
 class QueryAnalyzer:

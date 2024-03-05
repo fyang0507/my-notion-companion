@@ -1,40 +1,38 @@
 import json
-import tomllib
-
-from typing import Dict, Any, List, Sequence, Union, Tuple
-
-from langchain_community.llms import LlamaCpp
-from langchain.prompts import PromptTemplate
-
-from langchain_community.vectorstores import Redis
-from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
-
-from langchain.chains.query_constructor.base import AttributeInfo
-
-from langchain_core.prompts.few_shot import FewShotPromptTemplate
-from langchain.chains.query_constructor.prompt import (
-    USER_SPECIFIED_EXAMPLE_PROMPT,
-    SUFFIX_WITHOUT_DATA_SOURCE,
-)
-
-from langchain.retrievers.self_query.redis import RedisTranslator
-from langchain.retrievers import SelfQueryRetriever
-from langchain.chains.query_constructor.base import StructuredQueryOutputParser
-from langchain.output_parsers.boolean import BaseOutputParser
-from langchain.retrievers import ContextualCompressionRetriever
-from langchain.retrievers.document_compressors import LLMChainFilter
-from langchain_core.documents.base import Document
-from my_notion_companion.document_filter import DocumentFilter
-from my_notion_companion.query_analyzer import QueryAnalyzer
-
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.retrievers import BM25Retriever
-import jieba
-
 import re
+import time
+import tomllib
+from typing import Any, Dict, List, Sequence, Tuple, Union
+
+import jieba
+from langchain.chains.query_constructor.base import (
+    AttributeInfo,
+    StructuredQueryOutputParser,
+)
+from langchain.chains.query_constructor.prompt import (
+    SUFFIX_WITHOUT_DATA_SOURCE,
+    USER_SPECIFIED_EXAMPLE_PROMPT,
+)
+from langchain.output_parsers.boolean import BaseOutputParser
+from langchain.prompts import PromptTemplate
+from langchain.retrievers import (
+    BM25Retriever,
+    ContextualCompressionRetriever,
+    SelfQueryRetriever,
+)
+from langchain.retrievers.document_compressors import LLMChainFilter
+from langchain.retrievers.self_query.redis import RedisTranslator
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
+from langchain_community.llms import LlamaCpp
+from langchain_community.vectorstores import Redis
+from langchain_core.documents.base import Document
+from langchain_core.prompts.few_shot import FewShotPromptTemplate
 from loguru import logger
 from utils import load_test_cases
-import time
+
+from my_notion_companion.document_filter import DocumentFilter
+from my_notion_companion.query_analyzer import QueryAnalyzer
 
 
 class BasicRetriever:

@@ -1,8 +1,9 @@
-from langchain_core.documents.base import Document
-from typing import List
-from thefuzz import fuzz
-from loguru import logger
 from multiprocessing.pool import ThreadPool
+from typing import List
+
+from langchain_core.documents.base import Document
+from loguru import logger
+from thefuzz import fuzz
 
 
 class DocumentFilter:

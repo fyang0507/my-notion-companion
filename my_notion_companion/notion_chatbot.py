@@ -1,13 +1,14 @@
-from retriever import BM25SelfQueryRetriever
-from conversational_rag import ConversationalRAG
-from typing import Dict, Any, List
-from langchain_community.llms import LlamaCpp
-from notion_loader import NotionLoader
-from langchain_core.documents.base import Document
-import tomllib
-import pickle
 import os
+import pickle
+import tomllib
+from typing import Any, Dict, List
+
+from conversational_rag import ConversationalRAG
+from langchain_community.llms import LlamaCpp
+from langchain_core.documents.base import Document
 from loguru import logger
+from notion_loader import NotionLoader
+from retriever import BM25SelfQueryRetriever
 from utils import peek_docs
 
 
