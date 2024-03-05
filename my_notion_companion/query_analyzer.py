@@ -23,7 +23,7 @@ class QueryAnalyzer:
             config["model_name"], trust_remote_code=True
         )
 
-        with open(self.config["template"]["query_constructor"], "rb") as f:
+        with open(self.config["template"]["query_analyzer"], "rb") as f:
             self.query_constructor_template = tomllib.load(f)
 
         self.template = FewShotTemplateConstructor(
@@ -74,7 +74,7 @@ class QueryAnalyzer:
         return self.chain.invoke(query)
 
 
-class QueryConstructorException(BaseException):
+class QueryConstructorException(RuntimeError):
     """Can't construct query."""
 
     pass

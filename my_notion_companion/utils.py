@@ -1,5 +1,6 @@
 import re
 from typing import List, Dict
+from langchain_core.documents.base import Document
 
 
 def fix_qwen_padding(s: str) -> str:
@@ -23,3 +24,16 @@ def load_test_cases(path: str) -> List[Dict[str, str]]:
     test_cases = [{"q": x[0], "a": x[1], "docs": x[2:]} for x in raw]
 
     return test_cases
+
+
+def peek_docs(docs: List[Document]) -> str:
+    result = ""
+    for doc in docs:
+        result += str(doc.metadata)
+        result += "\n"
+        result += doc.page_content[:30]
+        result += "...\n"
+        result += "-" * 30
+        result += "\n"
+
+    return result

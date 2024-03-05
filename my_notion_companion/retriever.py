@@ -34,8 +34,7 @@ import jieba
 import re
 from loguru import logger
 from utils import load_test_cases
-from document_filter import NoMatchedDocException
-from query_analyzer import QueryConstructorException
+import time
 
 
 class BasicRetriever:
@@ -72,7 +71,7 @@ class BM25SelfQueryRetriever:
 
         self._split_documents()
 
-        self.doc_filter = DocumentFilter(self.splits, threshold=1.0)
+        self.doc_filter = DocumentFilter(self.splits, threshold=0.8)
         self.query_analyzer = QueryAnalyzer(llm, config, verbose=True)
 
     def _split_documents(self) -> None:
@@ -100,7 +99,7 @@ class BM25SelfQueryRetriever:
             logger.info(f"filter found by query analyzer: {domains}")
             try:
                 splits = self.doc_filter.filter_multiple_criteria(domains, operand="OR")
-            except NoMatchedDocException:
+            except RuntimeError:
                 logger.info(
                     "No matched doc found based on query analyzer. Search all docs."
                 )
@@ -115,14 +114,13 @@ class BM25SelfQueryRetriever:
     def invoke(self, query: str) -> List[Document]:
         try:
             query_formatted = self.query_analyzer.invoke(query)
-            splits_retrieved = self._filter_documents(query_formatted)
-        except QueryConstructorException:
+        except RuntimeError:
             logger.error(
                 f"Failed to construct query for the input: {query}, returning raw input."
             )
-            splits_retrieved = self._retrieve_all(query)
+            return self._get_relevant_documents(query, self.splits)
 
-        return splits_retrieved
+        return self._filter_documents(query_formatted)
 
 
 class RedisSelfQueryRetriever:
@@ -341,6 +339,7 @@ class RetrieverEvaluator:
         score_list = list()
 
         for case in self.test_cases:
+            time.sleep(0.1)
             docs_retrieved = retriever.invoke(case["q"])
             for ref in case["docs"]:
                 score_list.append(self._match_chinese(ref, docs_retrieved))

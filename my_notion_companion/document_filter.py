@@ -20,9 +20,12 @@ class DocumentFilter:
         def _filter_func(doc: Document) -> bool:
             has_match = False
             for attr in doc.metadata:
+                # the search value must be both qualified for partial and full match
                 if (
                     fuzz.partial_ratio(str(doc.metadata[attr]), val)
                     >= self.threshold * 100
+                ) and (
+                    fuzz.ratio(str(doc.metadata[attr]), val) >= self.threshold * 100
                 ):
                     has_match = True
                     break
@@ -35,11 +38,11 @@ class DocumentFilter:
 
     def filter(self, val: str) -> List[Document]:
         is_matched = self._find_match(val, self.docs)
-        matched_list = [x for x, b in zip(self.docs, is_matched) if b]
+        docs = [x for x, b in zip(self.docs, is_matched) if b]
 
-        if matched_list:
-            logger.info(f"Remaining doc: {len(matched_list)/len(self.docs): .3f}")
-            return matched_list
+        if docs:
+            logger.info(f"Remaining doc: {len(docs)/len(self.docs): .3f}")
+            return docs
         else:
             raise NoMatchedDocException(
                 "No matched docs based on input filter criteria."
@@ -68,10 +71,11 @@ class DocumentFilter:
                 "No matched docs based on input filter criteria."
             )
 
+        logger.info(f"Remaining doc: {len(docs)/len(self.docs): .3f}")
         return docs
 
 
-class NoMatchedDocException(BaseException):
+class NoMatchedDocException(RuntimeError):
     """No matched docs based on input filter criteria."""
 
     pass

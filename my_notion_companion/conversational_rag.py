@@ -1,18 +1,23 @@
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from langchain_community.llms import LlamaCpp
-from langchain.prompts import PromptTemplate
 
 from transformers import AutoTokenizer
 from transformers.pipelines.conversational import Conversation
 from langchain_core.prompt_values import StringPromptValue
 from utils import fix_qwen_padding
-from langchain_core.language_models.chat_models import BaseChatModel
+
+from langchain_core.documents.base import Document
 
 
-class ChatBot:
-    def __init__(self, llm: LlamaCpp, config: Dict[str, Any]):
-
+class ConversationalRAG:
+    def __init__(
+        self,
+        llm: LlamaCpp,
+        config: Dict[str, Any],
+        system_message: str,
+        contexts: List[Document],
+    ):
         self.llm = llm
 
         self.tokenizer = AutoTokenizer.from_pretrained(
@@ -25,15 +30,16 @@ class ChatBot:
 
         self.sys_msg = {
             "role": "system",
-            "content": """You are a helpful assistant. You only answer questions you are very sure of. \
-When you don't know, say "I don't know." Avoid not replying at all. Please answer questions in the language being asked.\
-你是一个友好而乐于助人的AI助手。\
-你只回答你非常确定的问题。如果你不知道，你会如实回答“我不知道。”不能拒绝回答问题。请使用提问使用的语言进行回答。""",
+            "content": system_message + "\n\n" + self._format_docs(contexts),
         }
 
         # add system message to the conversation history
         self.conversation.add_message(self.sys_msg)
         self.full_history.add_message(self.sys_msg)
+
+    @staticmethod
+    def _format_docs(docs: List[Document]) -> str:
+        return "\n\n".join(doc.page_content for doc in docs)
 
     def convert_message_to_llm_format(self, msg: Conversation):
         # https://huggingface.co/docs/transformers/chat_templating
@@ -79,11 +85,6 @@ When you don't know, say "I don't know." Avoid not replying at all. Please answe
         self._keep_k_rounds_most_recent_conversation()
 
         return response
-
-    # def __call__(self, text: str):
-    #     # have to create a __call__ interface for SelfQueryRetriever constructor
-    #     # otherwise hit TypeError: Expected a Runnable, callable or dict.Instead got an unsupported type: <class '__main__.chatbot'>
-    #     self.invoke(text)
 
     def clear_conversation(self):
         self.conversation = Conversation()
