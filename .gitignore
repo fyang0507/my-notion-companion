@@ -91,5 +91,7 @@ ipython_config.py
 database/
 # data folder
 data/
+# sys env
+.env
 
 .DS_Store
