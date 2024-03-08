@@ -31,7 +31,7 @@ def peek_docs(docs: List[Document]) -> str:
     result = ""
     for doc in docs:
         result += str(doc.metadata)
-        result += "\n"
+        result += "\n\n"
         result += doc.page_content[:30]
         result += "...\n"
         result += "-" * 30

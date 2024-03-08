@@ -37,7 +37,16 @@ class ConversationalRAG:
 
     @staticmethod
     def _format_docs(docs: List[Document]) -> str:
-        return "\n\n".join(doc.page_content for doc in docs)
+        def format_doc_with_metadata(doc: Document) -> str:
+            return "内容：\n" + doc.page_content + "\n\n元数据：\n" + str(doc.metadata)
+
+        s = ""
+        for idx, doc in enumerate(docs):
+            s += f"文档{idx+1}\n\n"
+            s += format_doc_with_metadata(doc)
+            s += "\n\n\n"
+
+        return s[:-3]  # skip the last \n\n\n
 
     def convert_message_to_llm_format(self, msg: Conversation):
         # https://huggingface.co/docs/transformers/chat_templating
