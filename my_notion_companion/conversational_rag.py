@@ -3,6 +3,7 @@ from typing import Any, Dict, List
 from langchain_community.llms import LlamaCpp
 from langchain_core.documents.base import Document
 from langchain_core.prompt_values import StringPromptValue
+from loguru import logger
 from transformers import AutoTokenizer
 from transformers.pipelines.conversational import Conversation
 from utils import fix_qwen_padding
@@ -23,6 +24,8 @@ class ConversationalRAG:
         )
 
         self.model_params = config["llm"]
+        self.k_rounds_memory = self.model_params["conversation"]["k_rounds"]
+
         self.conversation = Conversation()
         self.full_history = Conversation()
 
@@ -71,9 +74,20 @@ class ConversationalRAG:
         self.conversation.add_message(inputs)
         self.full_history.add_message(inputs)
 
-        inputs = self.convert_message_to_llm_format(self.conversation)
-
-        response = self.llm.invoke(inputs)
+        try:
+            response = self.llm.invoke(
+                self.convert_message_to_llm_format(self.conversation)
+            )
+        except ValueError:
+            logger.info(
+                f"Prompt token exceed context window of {self.llm.n_ctx}.\n"
+                f"Clear memory and keep only the last {self.k_rounds_memory} rounds of conversation."
+            )
+            # remove old conversations form memory
+            self._keep_k_rounds_most_recent_conversation()
+            response = self.llm.invoke(
+                self.convert_message_to_llm_format(self.conversation)
+            )
 
         if self.llm.name == "Qwen/Qwen-7B-Chat":
             response = fix_qwen_padding(response)
@@ -88,24 +102,29 @@ class ConversationalRAG:
         self.conversation.add_message(response)
         self.full_history.add_message(response)
 
-        # prevent memory overflow
-        self._keep_k_rounds_most_recent_conversation()
-
         return response
 
-    def clear_conversation(self):
+    def clear(self):
         self.conversation = Conversation()
+        self.full_history = Conversation()
+        # add system message to the conversation history
+        self.conversation.add_message(self.sys_msg)
+        self.full_history.add_message(self.sys_msg)
 
-    def _keep_k_rounds_most_recent_conversation(self):
-        k = self.model_params["conversation"]["k_rounds"]
-        if len(self.conversation) > 2 * k:
+    def _keep_k_rounds_most_recent_conversation(self) -> None:
+        if self.k_rounds_memory < 0:
+            return
+        elif len(self.conversation) > 2 * self.k_rounds_memory:
             # keep if system input exists
             if self.conversation[0]["role"] == "system":
                 self.conversation = Conversation(
-                    [self.conversation[0]] + self.conversation[-2 * k :]
+                    [self.conversation[0]]
+                    + self.conversation[-2 * self.k_rounds_memory + 1 :]
                 )
             else:
-                self.conversation = Conversation(self.conversation[-2 * k :])
+                self.conversation = Conversation(
+                    self.conversation[-2 * self.k_rounds_memory + 1 :]
+                )
 
     def extract_ai_responses(self):
         return self.full_history.generated_responses
