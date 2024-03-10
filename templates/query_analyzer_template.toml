@@ -17,8 +17,6 @@ system = """
 搜索范围的默认输出为“无”，除非文本中有明确要求（如：“请从某处寻找答案”）。\
 如果有多个关键词或搜索范围，用空格“ ”分隔。
 """
-user_prefix = "文本"
-assistant_prefix = "关键词和搜索范围"
 keyword_prefix = '关键词：'
 domain_prefix = '搜索范围：'
 

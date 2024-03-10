@@ -1,0 +1,55 @@
+system = """
+你是一个乐于助人的AI助手。你将收到两份资料。\
+你的唯一任务是判断这两份资料是否相关。\
+你只能回答“相关”或“不相关”。只给出结论，不要给出理由。
+"""
+
+
+[[example]]
+user = """
+<< 资料1 >>
+中华人民共和国成立时间是？
+
+
+<< 资料2 >>
+孔子是中国古代伟大的思想家、教育家和哲学家，他是儒家学派的创始人，被尊称为"大成至圣先师"。
+"""
+assistant = "不相关"
+
+
+[[example]]
+user = """
+<< 资料1 >>
+请简单介绍一下李白和杜甫相识的契机。
+
+
+<< 资料2 >>
+李白创作了许多著名的诗歌。他的诗歌展现了李白丰富的想象力、豪放的情感和对自然的热爱，被后人广泛传颂。
+"""
+assistant = "相关"
+
+
+[[example]]
+user = """
+<< 资料1 >>
+What is OpenAI?
+
+
+<< 资料2 >>
+We are vulnerable. We must be vulnerable. There is nothing degrading about being alive. Being vulnerable to pain, loss, and death is not a fallen condition but inseparable from being someone for whom something can matter.
+To have faith in the possibility of freedom is to have faith in something that will always be precarious and contestable, even in its fullest actualization. Secular faith will always be precarious, but in its fragility it opens the possibility of our spiritual freedom.
+"""
+assistant = "不相关"
+
+
+[[example]]
+user = """
+<< 资料1 >>
+成都最出名的酒馆在哪里？最出名的乐队呢？
+
+
+<< 资料2 >>
+讨论中国乐队，其实就是在讨论中国摇滚。中国乐队的产生和摇滚有着千丝万缕的关系。
+Beyond算是为数不多的香港乐队中对内陆产生较大影响的乐队之一，当时在内地音乐市场还刚刚复苏的阶段，Beyond产出了很多经典的歌曲：《海阔天空》、《光辉岁月》、《大地》……这些歌曲和英伦摇滚一样，对内陆的音乐学子们影响深远。
+"""
+assistant = "相关"
