@@ -12,6 +12,7 @@ class QueryAnalyzer:
     def __init__(
         self,
         llm: LlamaCpp,
+        tokenizer: AutoTokenizer,
         config: Dict[str, Any],
         verbose: bool = False,
     ) -> None:
@@ -20,9 +21,7 @@ class QueryAnalyzer:
         self.llm = llm
         self.verbose = verbose
 
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            config["model_name"], trust_remote_code=True
-        )
+        self.tokenizer = tokenizer
 
         with open(self.config["template"]["query_analyzer"], "rb") as f:
             self.query_constructor_template = tomllib.load(f)
@@ -37,6 +36,8 @@ class QueryAnalyzer:
             | RunnableLambda(self.clean_output)
             | RunnableLambda(self.parse_output)
         )
+
+        logger.info("Initialize Query Analyzer.")
 
     @staticmethod
     def clean_output(s: str) -> str:
