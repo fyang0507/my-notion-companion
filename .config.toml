@@ -18,7 +18,7 @@ model_mapping.'HuggingFaceH4/zephyr-7b-beta' = 'zephyr-7b-beta.Q4_K_M.gguf'
 # ref: https://github.com/langchain-ai/langchain/blob/master/libs/community/langchain_community/llms/llamacpp.py
 llm.n_gpu_layers = 32 # number of layer to be loaded in GPU. can check n_layers to see the total layers of llm
 llm.n_batch = 2048 # batch size, number of tokens the model should process in parallel, should be between 1 and n_ctx, depend on the amount of RAM of Apple Silicon Chip.
-llm.n_ctx = 4096 # context size, default is 2048, zephyr (base model mistrial 7b) supports 8K contexts
+llm.n_ctx = 7168 # context size, default is 2048, zephyr (base model mistrial 7b) supports 8K contexts
 llm.temperature = 0.0
 llm.f16_kv = true # Metal only supports True. Used to be a bug, see https://github.com/langchain-ai/langchain/pull/3320#issue-1679133618
 # customized
@@ -41,49 +41,16 @@ force_repull = false
 # embedding model
 embedding_model = "sentence-transformers/distiluse-base-multilingual-cased-v1"
 
-# enable contextual compressor
-enable_compressor = true
-
 # template and few-shot examples
 template.query_analyzer = '../templates/query_analyzer_template.toml'
 template.conversatoinal_rag = '../templates/conversational_rag_template.toml'
-
-template.self_query = '../self_query_template.txt'
-example.self_query = '../self_query_examples.toml'
-template.compressor = '../compressor_template.txt'
+template.document_match_checker = '../templates/document_match_checker_template.toml'
 
 # splitter
 # 1 Chinese characters = 2 english character
 # most paragraphs/sections are within 500 Chinese words/chars
 splitter.chunk_size = 500
 splitter.chunk_overlap = 50
-
-# Document content: description of the documents
-# used in self-query
-content = "文章"
-
-# Documents attributes: description of attributes/metadata in the document
-# used in self-query
-attributes.author.description = "本篇文章的作者"
-attributes.author.type = "string"
-
-attributes.date_start.description = "文章被创建的时间，格式是YYYYMMDD"
-attributes.date_start.type = "string"
-
-attributes.date_end.description = "文章被完成的时间，格式是YYYYMMDD"
-attributes.date_end.type = "string"
-
-attributes.id.description = "文章的id"
-attributes.id.type = "string"
-
-attributes.name.description = "文章的名字"
-attributes.name.type = "string"
-
-attributes.source.description = "文章的来源，这里的文章取自若干不同数据库"
-attributes.source.type = "string"
-
-attributes.tags.description = "文章的标签，可能代表它的风格、题材、来源，或者系列"
-attributes.tags.type = "string"
 
 # connection to redis standalone at localhost, db 0, no password
 redis_url = "redis://localhost:6379"
