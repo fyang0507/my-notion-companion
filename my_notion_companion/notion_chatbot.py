@@ -1,13 +1,11 @@
 import os
 import pickle
 import tomllib
-from typing import Any, Dict, List
 
 from conversational_rag import ConversationalRAG
 from document_filter import NoMatchedDocException
 from document_match_checker import DocumentMatchChecker
 from langchain_community.llms import LlamaCpp
-from langchain_core.documents.base import Document
 from loguru import logger
 from notion_loader import NotionLoader
 from retriever import BM25SelfQueryRetriever, RedisRetriever

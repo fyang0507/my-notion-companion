@@ -78,5 +78,3 @@ class DocumentFilter:
 
 class NoMatchedDocException(RuntimeError):
     """No matched docs based on input filter criteria."""
-
-    pass

@@ -78,5 +78,3 @@ class QueryAnalyzer:
 
 class QueryConstructorException(RuntimeError):
     """Can't construct query."""
-
-    pass

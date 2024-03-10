@@ -1,7 +1,6 @@
 import pickle
 import random
 import time
-from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List
 
 from langchain_community.document_loaders import NotionDBLoader
