@@ -1,28 +1,42 @@
 """
-Ref: https://docs.streamlit.io/knowledge-base/tutorials/build-conversational-apps
+Ref: https://docs.streamlit.io/get-started/tutorials/create-a-multipage-app
 """
 
 import streamlit as st
 
-st.title("🤖 My Notion Campnion")
+st.set_page_config(
+    page_title="My Notion Companion",
+    page_icon="🤖",
+)
+
+st.title("My Notion Companion 🤖")
 st.caption(
-    "A conversational RAG that helps answer questions of my (mostly Chinese-based) Notion Databases."
+    "A conversational RAG that helps to chat with my (mostly Chinese-based) Notion Databases."
 )
 st.caption(
     "Powered by: [🦜🔗](https://www.langchain.com/), [🤗](https://huggingface.co/), [LlamaCpp](https://github.com/ggerganov/llama.cpp), [Streamlit](https://streamlit.io/)."
 )
 
+# st.sidebar.success("Select a demo above.")
 
-st.markdown(
-    """
-Search func in Notion sucks. It supports only discrete keyword search with exact match (e.g. it treats Taylor Swift as two words).
 
-What's even worse is that most of my documents are in Chinese. Most Chinese words consist of
-multiple characters. If you break them up, you end up with searching nonsense ("上海"=Shanghai, "上"=up,"海"=ocean).
+import random
+import time
 
-I build this LLM tool to help me query my Notion documents with natural language.
-"""
-)
+
+# Streamed response emulator
+def response_generator():
+    response = random.choice(
+        [
+            "Hello there! How can I assist you today?",
+            "Hi, human! Is there anything I can help you with?",
+            "Do you need help?",
+        ]
+    )
+    for word in response.split():
+        yield word + " "
+        time.sleep(0.05)
+
 
 # Initialize chat history
 if "messages" not in st.session_state:
@@ -43,7 +57,6 @@ if prompt := st.chat_input("How can I help you?"):
 
     # Display assistant response in chat message container
     with st.chat_message("assistant"):
-        # response = st.write_stream(response_generator())
-        response = st.write("hey")
+        response = st.write_stream(response_generator())
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": response})
