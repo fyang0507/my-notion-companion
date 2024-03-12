@@ -1,9 +1,32 @@
+import os
+import pickle
 import re
-from typing import Dict, List
+import tomllib
+from typing import Any, Dict, List
 
 from langchain_core.documents.base import Document
+from loguru import logger
+from notion_loader import NotionLoader
 from transformers import AutoTokenizer
 from transformers.pipelines.conversational import Conversation
+
+
+def load_notion_documents(
+    config: Dict[str, Any], tokens: Dict[str, str]
+) -> List[Document]:
+    if not config["force_repull"] and os.path.exists(config["path"]["docs"]):
+        logger.info("Load data from existing offline copy.")
+        with open(config["path"]["docs"], "rb") as f:
+            docs = pickle.load(f)
+    else:
+        logger.info("Load data from notion API.")
+        with open(config["path"]["notion_dbs"], "rb") as f:
+            _DATABASES_NOTION = tomllib.load(f)
+
+        loader = NotionLoader(tokens, _DATABASES_NOTION)
+        loader.export_to_pickle(config["path"]["docs"])
+        docs = loader.load()
+    return docs
 
 
 def fix_qwen_padding(s: str) -> str:

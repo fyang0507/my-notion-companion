@@ -1,5 +1,3 @@
-import os
-import pickle
 import tomllib
 
 from conversational_rag import ConversationalRAG
@@ -7,10 +5,9 @@ from document_filter import NoMatchedDocException
 from document_match_checker import DocumentMatchChecker
 from langchain_community.llms import LlamaCpp
 from loguru import logger
-from notion_loader import NotionLoader
 from retriever import BM25SelfQueryRetriever, RedisRetriever
 from transformers import AutoTokenizer
-from utils import peek_docs
+from utils import load_notion_documents, peek_docs
 
 
 class NotionChatBot:
@@ -35,7 +32,7 @@ class NotionChatBot:
         self.tokenizer = tokneizer
         self.verbose = verbose
 
-        self._load_documents()
+        self.docs = load_notion_documents(self.config, self.tokens)
         self._initialize_retriever()
 
         self.n_query = 0
@@ -83,24 +80,6 @@ class NotionChatBot:
                 raise NoMatchedDocException()
 
         return self.conversatoinal_rag.invoke(query)
-
-    def _load_documents(self) -> None:
-        if not self.config["force_repull"] and os.path.exists(
-            self.config["path"]["docs"]
-        ):
-            logger.info("Load data from existing offline copy.")
-            with open(self.config["path"]["docs"], "rb") as f:
-                docs = pickle.load(f)
-        else:
-            logger.info("Load data from notion API.")
-            with open(self.config["path"]["notion_dbs"], "rb") as f:
-                _DATABASES_NOTION = tomllib.load(f)
-
-            loader = NotionLoader(self.tokens, _DATABASES_NOTION)
-            loader.export_to_pickle(self.config["path"]["docs"])
-            docs = loader.load()
-
-        self.docs = docs
 
     def _initialize_retriever(self) -> None:
 
