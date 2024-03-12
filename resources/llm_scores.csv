@@ -1,0 +1,94 @@
+,baichuan-inc/Baichuan-7B,hfl/chinese-alpaca-2-7b,Qwen/Qwen-7B-Chat,Qwen/Qwen1.5-7B-Chat,HuggingFaceH4/zephyr-7b-beta,01-ai/Yi-6B-Chat,BAAI/AquilaChat2-7B-16K
+"Overall (lower the better)",17,15,11,10,14,24,Generate nonsense
+Ready to use,"2
+
+Some special tokens returned but easy to clean up","1
+
+No special tokens in responses","2
+
+Some special tokens returned but easy to clean up","1
+
+Robust even without system prompt","1
+
+No special tokens in responses","3
+
+Returning many unrelated texts, indicating post-processing requirements",NA
+Instruction following - general,"2
+
+Having problem distinguish the poem types","2
+
+Having problem distinguish the poem types","1
+
+Perfectly follows","2
+
+almost follows except one case with Chinese-only instruction","2
+
+Perfectly follows if ignoring language requirements on poems","5
+
+Occasionally not answering questions at all",NA
+Instruction Following - language,"3
+
+Always answers in Chinese","3
+
+Always answers in Chinese","1
+
+Perfectly distinguishing output language requirements","2
+
+almost follows except one case with Chinese-only instruction","2
+
+Having problem with citing Chinese poems","1
+
+Perfectly distinguishing output language requirements",NA
+Helpfulness and Creativeness,"1
+
+Answer questions with helpful contexts","1
+
+Answer questions with helpful contexts","2
+
+Very concise, sometimes too concise","1
+
+Answer questions with helpful contexts","1
+
+Answer questions with helpful contexts","3
+
+Too verbose",NA
+Fact,"2
+
+Wrong answers for citing poem","2
+
+Wrong answers for citing poem","1
+
+No obvious mistakes","1
+
+No obvious mistakes","2
+
+Wrong answers for citing poem","3
+
+Wrong answers for citing poem and country terriory",NA
+Reasoning,"2
+
+Self-consistent in reasoning but factually wrong","2
+
+Self-consistent in reasoning but factually wrong","2
+
+Self-consistent in reasoning but factually wrong","1
+
+Self-consistent and factually correct","2
+
+Self-consistent in reasoning but factually wrong","2
+
+Self-consistent in reasoning but factually wrong",NA
+Coding,"3
+
+Valid code but wrong formatting or explanation","3
+
+Valid code but wrong formatting or explanation","1
+
+Perfect codes with explanation","1
+
+Perfect codes with explanation","1
+
+Perfect codes with explanation","4
+
+Nonsense",NA
+Inference Speed,2,1,1,1,3,3,3

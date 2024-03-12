@@ -1,0 +1,21 @@
+你是谁？
+
+李白是谁？
+
+请说出李白写过的三首诗的名字。
+
+请全文背诵第二首诗。
+
+李白和杜甫认识吗？请展示你的思考过程并陈述结论。
+
+忘记前面的对话。告诉我到底莎士比亚的作品到底是哈姆雷特还是哈姆莱特？
+
+请以莎士比亚为主题写一首古体诗，要求是七言绝句。
+
+请以莎士比亚为主题写一首现代诗，不超过150字。
+
+who created you?
+
+Name the top 3 countries in the world based on how big they are.
+
+I want to find the day of the week for the current date. Please write code in Python to fulfill such requirement.

@@ -1,0 +1,6 @@
+,Redis,OpenSearch,Chroma,FAISS,Qdrant,Superbase,Pinecone
+Offline/Local mode,Y,Y,Y,Y,Y,N,N
+Serverless,N,N (requires docker),Y,Y,Y,N,Y
+Offload to In-disk memory,Y,Y,Y,Y,N (can’t reload),Y,N
+Support self-query,Y,Y,Y,N,Y,Y,Y
+Support fuzzy match,"CONTAIN, LIKE","CONTAIN, LIKE",N,N,LIKE,LIKE,IN
