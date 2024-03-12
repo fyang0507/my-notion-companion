@@ -51,7 +51,7 @@ I have compared a wide range of Bi/Multi-lingual LLMs with 7B parameters that ha
 
 I created conversational test cases to assess the models' instruction following, reasoning, helpfulness, coding, hallucinations and inference speed.
 Qwen models (Qwen 1.0 & 1.5), together with HuggingFace's zephyr-7b-beta come as the top 3, but Qwen models are overly creative and do not follow few-shot examples.
-Thus, the final candidate goes to zephyr.
+Thus, the final candidate goes to **zephyr**.
 
 Access the complete LLM evaluation results [here](https://docs.google.com/spreadsheets/d/1OZKu6m0fHPYkbf9SBV6UUOE_flgBG7gphgyo2rzOpsU/edit?usp=sharing).
 """
