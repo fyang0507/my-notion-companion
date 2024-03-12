@@ -89,19 +89,48 @@ st.dataframe(df_vs)
 
 st.markdown(
     """
-#### Selecting the right Embedding model
+#### Selecting the right Embedding Model
 
+Many companies have released their embeddings models. Our search begins with bi/multi-lingual embedding models
+developed by top-tier tech companies and research labs, with sizes from 500MB-2.2GB.
 
+Our evaluation dataset contains hand-crafted question-document pairs. Where the document contains the information to answer the associated question.
+Similar to [**CLIP**](https://openai.com/research/clip) method, I uses a "contrastive loss function" to evaluate the model such that we maximize the differences between paired and unpaired question-doc pairs.
+
+```
+loss = np.abs(
+    cos_sim(embedding(q), embedding(doc_paired)) -
+        np.mean(cos_sim(embedding(q), embedding(doc_unpaired)))
+)
+```
+
+In addition, I also considers model size and loading/inference speed for each model.
+
+`sentence-transformers/distiluse-base-multilingual-cased-v1` turns out to be the best candidate with the top-class inference speed and best contrastive loss.
+
+Check the evaluation notebook [here](https://github.com/fyang0507/my-notion-companion/blob/main/playground/evaluate_embedding_models.ipynb).
 """
 )
+
+df_embedding = pd.read_csv("resources/embedding_model_scores.csv", index_col=0)
+
+st.dataframe(df_embedding)
+
 
 st.markdown(
     """
 #### Selecting the right Observability Tool
 
-Langchain ecosystem comes with its own [LangSmith](https://www.langchain.com/langsmith) observability tool. It works out of the box with minimal configurations and requires no change in codes.
+Langchain ecosystem comes with its own [LangSmith](https://www.langchain.com/langsmith) observability tool. It works out of the box with minimal added configurations and requires no change in codes.
+
+LLM responses are somtimes unpredictable (especially a small 7B model, with multilingual capability), and it only gets more complex as we build the application as a LLM-chain.
+Below is a single observability trace recorded in LangSmith with a single query "谁曾在步行者队效力？从“写作”中找答案。" (Who plays in Indiana Pacers? Find the answer from Articles.)
+
+LangSmith helps organize the LLM calls and captures the I/O along the process, making the head-scratching debugging process much less misearble.
 """
 )
+
+st.video("resources/langsmith_walkthrough.mp4")
 
 
 st.markdown(

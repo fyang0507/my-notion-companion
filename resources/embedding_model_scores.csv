@@ -1,0 +1,11 @@
+﻿Model name,Provider,Model size (#pamras),Model Size (disk),Download past month,Highlights,Time Load/Inference (online compute),Mean difference paired & unpaired Q & Docs
+intfloat/multilingual-e5-large,Microsoft,560M,2.2G,93K,24 layers and the embedding size is 1024,5.0s/1920s,0.062
+intfloat/multilingual-e5-base,Microsoft,278M,1.1G,42K,12 layers and the embedding size is 768,3.4s/531s,0.063
+sentence-transformers/LaBSE,Google,,1.9G,88K,the embedding size is 768,5.7s/620s,0.19
+maidalun1020/bce-embedding-base_v1,NetEase-Youdao,279M,1.1G,111K,optimized for RAG,3.0s/495s,0.23
+BAAI/bge-large-zh-v1.5,Beijing Academy of Artificial Intelligence,326M,1.3G,22K,,1.6s/1730s,0.26
+uer/sbert-base-chinese-nli,Tencent,,409M,8K,12 layers and the embedding size is 768,0.6s/1350s,0.22
+sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,Sentence Transformer,,449M,38K,384 embedding size,1.4s/392s,0.25
+sentence-transformers/distiluse-base-multilingual-cased-v1,Sentence Transformer,,539M,31K,768 embedding size,1.3s/163s,0.28
+sentence-transformers/distiluse-base-multilingual-cased-v2,Sentence Transformer,,539M,43K,768 enbedding size,1.2s/164s,0.25
+sentence-transformers/paraphrase-multilingual-mpnet-base-v2,Sentence Transformer,,1.1G,24K,768 embedding size,2.7s/463s,0.21
