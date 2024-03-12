@@ -50,26 +50,33 @@ class NotionChatBot:
         if self.n_query == 1:
             logger.info("Try lexical search.")
             docs_retrieved = self.retriever_lexical.invoke(query)
-            docs_filtered = self.match_checker.invoke(docs_retrieved, query)
 
-            if len(docs_filtered) <= 2:
+            doc_ids = set([x.metadata["id"] for x in docs_retrieved])
+
+            if len(docs_retrieved) <= 2:
                 logger.info(
-                    f"{len(docs_filtered)} docs found via lexical search. Try semantic search."
+                    f"{len(docs_retrieved)} docs found via lexical search. Try semantic search."
                 )
-                docs_retrieved = self.retriever_semantic.invoke(query)
-                docs_filtered.extend(self.match_checker.invoke(docs_retrieved, query))
+                docs_semantic = self.retriever_semantic.invoke(query)
+                logger.info(
+                    f"{len(docs_semantic)} docs found via semantic search. Use LLM to check relevance."
+                )
+                docs_filtered = self.match_checker.invoke(docs_semantic, query)
+                docs_retrieved = docs_retrieved + list(
+                    filter(lambda x: x.metadata["id"] not in doc_ids, docs_filtered)
+                )
 
             if self.verbose:
-                logger.info(f"Retrieved relevant docs:\n\n{peek_docs(docs_filtered)}")
+                logger.info(f"Retrieved relevant docs:\n\n{peek_docs(docs_retrieved)}")
 
-            if len(docs_filtered) > 0:
+            if len(docs_retrieved) > 0:
 
                 self.conversatoinal_rag = ConversationalRAG(
                     self.llm,
                     self.tokenizer,
                     self.config,
                     self.system_message,
-                    docs_filtered,
+                    docs_retrieved,
                 )
                 logger.info("Initialize Conversational RAG.")
             else:

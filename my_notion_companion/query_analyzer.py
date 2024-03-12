@@ -39,11 +39,13 @@ class QueryAnalyzer:
 
         logger.info("Initialize Query Analyzer.")
 
-    @staticmethod
-    def clean_output(s: str) -> str:
+    def clean_output(self, s: str) -> str:
+        if self.verbose:
+            logger.info(f"Query Analyzer output: {s}")
+
         return s.split("\n\n")[0].split("|")
 
-    def parse_output(self, s: str, verbose: bool = False) -> Dict[str, str]:
+    def parse_output(self, s: str) -> Dict[str, str]:
         try:
             keywords = (
                 s[0]

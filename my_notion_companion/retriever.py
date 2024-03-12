@@ -10,6 +10,7 @@ from langchain_community.llms import LlamaCpp
 from langchain_community.vectorstores import Redis
 from langchain_core.documents.base import Document
 from loguru import logger
+from thefuzz import fuzz
 from transformers import AutoTokenizer
 from utils import load_test_cases
 
@@ -47,6 +48,8 @@ class BM25SelfQueryRetriever:
         tokenizer: AutoTokenizer,
         docs: List[Document],
         config: Dict[str, Any],
+        metadata_match_threshold: float = 0.8,
+        content_match_threshold: float = 0.3,
     ) -> None:
 
         self.llm = llm
@@ -54,9 +57,14 @@ class BM25SelfQueryRetriever:
         self.config = config
         self.docs = docs
 
+        self.metadata_match_threshold = metadata_match_threshold
+        self.content_match_threshold = content_match_threshold
+
         self._split_documents()
 
-        self.doc_filter = DocumentFilter(self.splits, threshold=0.8)
+        self.doc_filter = DocumentFilter(
+            self.splits, threshold=self.metadata_match_threshold
+        )
         self.query_analyzer = QueryAnalyzer(llm, tokenizer, config, verbose=True)
 
     def _split_documents(self) -> None:
@@ -66,12 +74,23 @@ class BM25SelfQueryRetriever:
     def _get_relevant_documents(
         self, query: str, splits: List[Document]
     ) -> List[Document]:
+
         retriever = BM25Retriever.from_documents(
             splits,
             k=self.config["bm25"]["k"],
             preprocess_func=lambda x: jieba.lcut_for_search(x, HMM=False),
         )
-        return retriever.invoke(query)
+
+        docs_retrieved = retriever.invoke(query)
+        docs_filtered = list(
+            filter(
+                lambda x: fuzz.partial_ratio(x.page_content, query)
+                >= self.content_match_threshold * 100,
+                docs_retrieved,
+            )
+        )
+
+        return docs_filtered
 
     def _filter_documents(self, query_formatted: Dict[str, str]) -> List[Document]:
         keywords: List[str] = query_formatted.get("keywords")
