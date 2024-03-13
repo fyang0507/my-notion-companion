@@ -30,10 +30,10 @@ llm.conversation.k_rounds = 1 # number of rounds of conversations to keep in mem
 bm25.k = 5
 
 # directories
-path.tokens = '../.tokens.toml'
-path.notion_dbs = '../.notion_databases.toml'
-path.docs = '../data/notion.pkl'
-path.test_cases = '../data/test_cases.txt'
+path.tokens = '.tokens.toml'
+path.notion_dbs = '.notion_databases.toml'
+path.docs = 'data/notion.pkl'
+path.test_cases = 'data/test_cases.txt'
 
 # notion data pull
 force_repull = false
@@ -42,9 +42,9 @@ force_repull = false
 embedding_model = "sentence-transformers/distiluse-base-multilingual-cased-v1"
 
 # template and few-shot examples
-template.query_analyzer = '../templates/query_analyzer_template.toml'
-template.conversatoinal_rag = '../templates/conversational_rag_template.toml'
-template.document_match_checker = '../templates/document_match_checker_template.toml'
+template.query_analyzer = 'templates/query_analyzer_template.toml'
+template.conversatoinal_rag = 'templates/conversational_rag_template.toml'
+template.document_match_checker = 'templates/document_match_checker_template.toml'
 
 # splitter
 # 1 Chinese characters = 2 english character
