@@ -13,7 +13,7 @@ Homepage = "https://github.com/fyang0507/my-notion-companion"
 
 [tool.setuptools.packages.find]
 # All the following settings are optional:
-where = ["my_notion_companion"]  # ["."] by default
+where = ["."]  # ["."] by default
 
 [tool.isort]
 profile = "black"
