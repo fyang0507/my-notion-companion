@@ -1,4 +1,5 @@
-"""
+"""Entry point to Streamlit UI.
+
 Ref: https://docs.streamlit.io/get-started/tutorials/create-a-multipage-app
 """
 
