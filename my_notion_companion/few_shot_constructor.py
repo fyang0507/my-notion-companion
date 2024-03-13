@@ -7,6 +7,10 @@ from my_notion_companion.utils import convert_message_to_llm_format
 
 
 class FewShotTemplateConstructor:
+    """Few shot template constructor.
+
+    Uses Hugging Face's generalizable chat template API.
+    """
 
     def __init__(self, tokenizer: AutoTokenizer, template: Dict[str, str]) -> None:
         self._check_template(template)

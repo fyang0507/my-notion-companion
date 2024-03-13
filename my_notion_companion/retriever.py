@@ -13,7 +13,7 @@ from loguru import logger
 from thefuzz import fuzz
 from transformers import AutoTokenizer
 
-from my_notion_companion.document_filter import DocumentFilter
+from my_notion_companion.document_metadata_filter import DocumentMetadataFilter
 from my_notion_companion.query_analyzer import QueryAnalyzer
 from my_notion_companion.utils import load_test_cases
 
@@ -62,7 +62,7 @@ class BM25SelfQueryRetriever:
 
         self._split_documents()
 
-        self.doc_filter = DocumentFilter(
+        self.doc_filter = DocumentMetadataFilter(
             self.splits, threshold=self.metadata_match_threshold
         )
         self.query_analyzer = QueryAnalyzer(llm, tokenizer, config, verbose=True)

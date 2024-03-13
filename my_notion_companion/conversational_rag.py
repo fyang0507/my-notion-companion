@@ -11,6 +11,12 @@ from my_notion_companion.utils import convert_message_to_llm_format, format_docs
 
 
 class ConversationalRAG:
+    """ConversationalRAG class is the entry point for 'chat with documents'.
+
+    It expect a list of documents as initialize param, and will construct system message with the documents.
+    It will have a memory of the chat history and user can ask follow up questions.
+    """
+
     def __init__(
         self,
         llm: LlamaCpp,
@@ -20,15 +26,16 @@ class ConversationalRAG:
         contexts: List[Document],
     ):
         self.llm = llm
-
         self.tokenizer = tokenizer
 
         self.model_params = config["llm"]
         self.k_rounds_memory = self.model_params["conversation"]["k_rounds"]
 
+        # initialize memory
         self.conversation = Conversation()
         self.full_history = Conversation()
 
+        # initialize system message
         self.system_message = {
             "role": "system",
             "content": system_message + "\n\n" + format_docs(contexts),
@@ -39,13 +46,13 @@ class ConversationalRAG:
         self.full_history.add_message(self.system_message)
 
     def invoke(self, text: str) -> str:
-
         # convert StringPromptValue (str like object but with format check) to string
         # it is incomptible with tokenizer.apply_chat_template()
         # ref: https://github.com/langchain-ai/langchain/blob/master/libs/core/langchain_core/prompt_values.py
         if isinstance(text, StringPromptValue):
             text = text.to_string()
 
+        # format input text
         inputs = {
             "role": "user",
             "content": text,
@@ -55,6 +62,8 @@ class ConversationalRAG:
         self.conversation.add_message(inputs)
         self.full_history.add_message(inputs)
 
+        # in case of context window overflow, reduce the memory size by keeping
+        # only the last k rounds of conversations
         try:
             logger.info(f"Sending query to conversatonal RAG: {text}")
             response = self.llm.invoke(
@@ -67,6 +76,7 @@ class ConversationalRAG:
             )
             # remove old conversations form memory
             self._keep_k_rounds_most_recent_conversation()
+            logger.info(f"Retry: sending query to conversatonal RAG: {text}")
             response = self.llm.invoke(
                 convert_message_to_llm_format(self.tokenizer, self.conversation)
             )
@@ -85,6 +95,7 @@ class ConversationalRAG:
         return response
 
     def clear(self) -> None:
+        """Clear conversation memory."""
         logger.info(
             "Clear conversation history. Please re-enter the follow up questions."
         )
@@ -95,6 +106,10 @@ class ConversationalRAG:
         self.full_history.add_message(self.system_message)
 
     def _keep_k_rounds_most_recent_conversation(self) -> None:
+        """Keep only the last K rounds of conversation in memory.
+
+        Avoid memory overflow because of context size limit.
+        """
         if self.k_rounds_memory < 0:
             return
         elif len(self.conversation) > 2 * self.k_rounds_memory:
@@ -110,4 +125,5 @@ class ConversationalRAG:
                 )
 
     def extract_ai_responses(self):
+        """Retrieve only assistant responses."""
         return self.full_history.generated_responses

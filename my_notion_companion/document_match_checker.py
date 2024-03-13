@@ -12,6 +12,11 @@ from my_notion_companion.utils import peek_docs
 
 
 class DocumentMatchChecker:
+    """DocumentMatchChecker supports checking whether a doc is relevant to a query.
+
+    It requires an input list of documents and outputs a filtered list of documents.
+    """
+
     def __init__(
         self,
         llm: LlamaCpp,
@@ -25,13 +30,14 @@ class DocumentMatchChecker:
         self.verbose = verbose
         self.config = config
 
+        # load few shot template
         with open(self.config["template"]["document_match_checker"], "rb") as f:
             self.query_constructor_template = tomllib.load(f)
-
         self.template = FewShotTemplateConstructor(
             self.tokenizer, self.query_constructor_template
         )
 
+        # construct the chain
         self.chain = RunnableLambda(self.template.invoke) | self.llm
 
     def invoke(self, docs: List[Document], query: str) -> List[Document]:
@@ -55,6 +61,8 @@ class DocumentMatchChecker:
         return f"""<< 资料1 >>\n{query}\n\n<< 资料2 >>\n{doc.page_content}"""
 
     def is_relevant(self, response: str) -> bool:
+        # use a loose definition
+        # can't prevent the llm from ouputting reasoning even with few-shot examples
         if "不相关" in response:
             return False
         return True

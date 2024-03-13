@@ -9,6 +9,11 @@ from loguru import logger
 
 
 class NotionLoader:
+    """Notion loader.
+
+    Uses Langchain's NotionDBLoader as the backend with additional metadata preprocessing.
+    Note: Notion API seems to have a rate limit and parallel call will be refused.
+    """
 
     def __init__(
         self,

@@ -6,7 +6,9 @@ from loguru import logger
 from thefuzz import fuzz
 
 
-class DocumentFilter:
+class DocumentMetadataFilter:
+    """DocumentMetadataFilter class helps filter documents based on their metadata values."""
+
     def __init__(
         self,
         docs: List[Document],
@@ -18,6 +20,12 @@ class DocumentFilter:
         self.docs = docs
 
     def _find_match(self, val: str, doc_list: List[Document]) -> List[int]:
+        """Find match of given a value and a list of documents.
+
+        The match is between the doc's metadata and input val.
+        This step is a parallelized step with multiprocessing tool.
+        """
+
         def _filter_func(doc: Document) -> bool:
             has_match = False
             for attr in doc.metadata:
@@ -38,6 +46,7 @@ class DocumentFilter:
         return is_matched
 
     def filter(self, val: str) -> List[Document]:
+        """Given a value, return the documents that contains the value in their metadata."""
         is_matched = self._find_match(val, self.docs)
         docs = [x for x, b in zip(self.docs, is_matched) if b]
 
@@ -52,6 +61,7 @@ class DocumentFilter:
     def filter_multiple_criteria(
         self, criteria: List[str], operand: str = "OR"
     ) -> List[Document]:
+        """Given a set of criteria (as a list of value) and operand (OR or AND), return docs that have match in metadata."""
         assert operand in ["OR", "AND"], "operand has to be either OR or AND."
 
         if operand == "AND":

@@ -5,13 +5,15 @@ from loguru import logger
 from transformers import AutoTokenizer
 
 from my_notion_companion.conversational_rag import ConversationalRAG
-from my_notion_companion.document_filter import NoMatchedDocException
 from my_notion_companion.document_match_checker import DocumentMatchChecker
+from my_notion_companion.document_metadata_filter import NoMatchedDocException
 from my_notion_companion.retriever import BM25SelfQueryRetriever, RedisRetriever
 from my_notion_companion.utils import load_notion_documents, peek_docs
 
 
 class NotionChatBot:
+    """NotionChatBot Chains document retriever and conversational RAG."""
+
     def __init__(
         self,
         llm: LlamaCpp,
@@ -20,12 +22,11 @@ class NotionChatBot:
         verbose: bool = False,
     ) -> None:
 
+        # load from configuration files
         with open(config_path, "rb") as f:
             self.config = tomllib.load(f)
-
         with open(self.config["path"]["tokens"], "rb") as f:
             self.tokens = tomllib.load(f)
-
         with open(self.config["template"]["conversatoinal_rag"], "rb") as f:
             self.system_message = tomllib.load(f)["system"]
 
@@ -39,6 +40,7 @@ class NotionChatBot:
         self.n_query = 0
 
     def clear(self) -> None:
+        """Clear history and retrieved documents."""
         logger.info("Clear retrieved documents. Please re-enter the prompt.")
         self.n_query = 0
 
@@ -83,11 +85,13 @@ class NotionChatBot:
         return self.conversational_rag.invoke(query)
 
     def _initialize_retriever(self) -> None:
-
+        # initialize lexical BM25 retriever
         self.retriever_lexical = BM25SelfQueryRetriever(
             self.llm, self.tokenizer, self.docs, self.config
         )
+        # Initialize semantic Redis retriever
         self.retriever_semantic = RedisRetriever(self.config, self.tokens)
+        # Initialize post-retrieval document relevance checker
         self.match_checker = DocumentMatchChecker(
             self.llm, self.tokenizer, self.config, self.verbose
         )

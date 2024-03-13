@@ -10,6 +10,12 @@ from my_notion_companion.few_shot_constructor import FewShotTemplateConstructor
 
 
 class QueryAnalyzer:
+    """QueryAnalyzer helps break a natural language query into structured 'keywords' and 'domain'.
+
+    The keywords will be used to search in documents' content; domain for search in documents' metadata.
+    The QueryAnalyzer is used together with lexical document retriever.
+    """
+
     def __init__(
         self,
         llm: LlamaCpp,
@@ -80,4 +86,4 @@ class QueryAnalyzer:
 
 
 class QueryConstructorException(RuntimeError):
-    """Can't construct query."""
+    """Can't construct query error."""
