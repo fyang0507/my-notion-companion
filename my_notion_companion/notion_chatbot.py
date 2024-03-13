@@ -69,7 +69,7 @@ class NotionChatBot:
 
             if len(docs_retrieved) > 0:
 
-                self.conversatoinal_rag = ConversationalRAG(
+                self.conversational_rag = ConversationalRAG(
                     self.llm,
                     self.tokenizer,
                     self.config,
@@ -80,7 +80,7 @@ class NotionChatBot:
             else:
                 raise NoMatchedDocException()
 
-        return self.conversatoinal_rag.invoke(query)
+        return self.conversational_rag.invoke(query)
 
     def _initialize_retriever(self) -> None:
 
