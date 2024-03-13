@@ -1,11 +1,12 @@
 import tomllib
 from typing import Any, Dict
 
-from few_shot_constructor import FewShotTemplateConstructor
 from langchain_community.llms import LlamaCpp
 from langchain_core.runnables import RunnableLambda
 from loguru import logger
 from transformers import AutoTokenizer
+
+from my_notion_companion.few_shot_constructor import FewShotTemplateConstructor
 
 
 class QueryAnalyzer:

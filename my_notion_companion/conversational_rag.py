@@ -6,7 +6,8 @@ from langchain_core.prompt_values import StringPromptValue
 from loguru import logger
 from transformers import AutoTokenizer
 from transformers.pipelines.conversational import Conversation
-from utils import convert_message_to_llm_format, format_docs
+
+from my_notion_companion.utils import convert_message_to_llm_format, format_docs
 
 
 class ConversationalRAG:
@@ -37,7 +38,7 @@ class ConversationalRAG:
         self.conversation.add_message(self.system_message)
         self.full_history.add_message(self.system_message)
 
-    def invoke(self, text: str) -> Dict[str, str]:
+    def invoke(self, text: str) -> str:
 
         # convert StringPromptValue (str like object but with format check) to string
         # it is incomptible with tokenizer.apply_chat_template()
@@ -55,6 +56,7 @@ class ConversationalRAG:
         self.full_history.add_message(inputs)
 
         try:
+            logger.info(f"Sending query to conversatonal RAG: {text}")
             response = self.llm.invoke(
                 convert_message_to_llm_format(self.tokenizer, self.conversation)
             )
@@ -69,15 +71,16 @@ class ConversationalRAG:
                 convert_message_to_llm_format(self.tokenizer, self.conversation)
             )
 
+        logger.info(f"Received response: {response}")
         # invoke chain and format to Conversation-style response
-        response = {
+        response_dict = {
             "role": "assistant",
             "content": response,
         }
 
         # add response to memory
-        self.conversation.add_message(response)
-        self.full_history.add_message(response)
+        self.conversation.add_message(response_dict)
+        self.full_history.add_message(response_dict)
 
         return response
 

@@ -6,9 +6,10 @@ from typing import Any, Dict, List
 
 from langchain_core.documents.base import Document
 from loguru import logger
-from notion_loader import NotionLoader
 from transformers import AutoTokenizer
 from transformers.pipelines.conversational import Conversation
+
+from my_notion_companion.notion_loader import NotionLoader
 
 
 def load_notion_documents(

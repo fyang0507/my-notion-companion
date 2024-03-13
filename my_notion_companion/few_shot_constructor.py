@@ -2,7 +2,8 @@ from typing import Dict
 
 from transformers import AutoTokenizer
 from transformers.pipelines.conversational import Conversation
-from utils import convert_message_to_llm_format
+
+from my_notion_companion.utils import convert_message_to_llm_format
 
 
 class FewShotTemplateConstructor:

@@ -4,7 +4,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 from langchain_community.vectorstores import Redis
 from loguru import logger
-from utils import load_notion_documents
+
+from my_notion_companion.utils import load_notion_documents
 
 
 class RedisIndexBuilder:

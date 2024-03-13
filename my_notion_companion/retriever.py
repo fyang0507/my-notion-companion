@@ -3,19 +3,19 @@ import time
 from typing import Any, Dict, List
 
 import jieba
-from langchain.retrievers import BM25Retriever
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
 from langchain_community.llms import LlamaCpp
+from langchain_community.retrievers import BM25Retriever
 from langchain_community.vectorstores import Redis
 from langchain_core.documents.base import Document
 from loguru import logger
 from thefuzz import fuzz
 from transformers import AutoTokenizer
-from utils import load_test_cases
 
 from my_notion_companion.document_filter import DocumentFilter
 from my_notion_companion.query_analyzer import QueryAnalyzer
+from my_notion_companion.utils import load_test_cases
 
 
 class RedisRetriever:

@@ -1,13 +1,14 @@
 import tomllib
 
-from conversational_rag import ConversationalRAG
-from document_filter import NoMatchedDocException
-from document_match_checker import DocumentMatchChecker
 from langchain_community.llms import LlamaCpp
 from loguru import logger
-from retriever import BM25SelfQueryRetriever, RedisRetriever
 from transformers import AutoTokenizer
-from utils import load_notion_documents, peek_docs
+
+from my_notion_companion.conversational_rag import ConversationalRAG
+from my_notion_companion.document_filter import NoMatchedDocException
+from my_notion_companion.document_match_checker import DocumentMatchChecker
+from my_notion_companion.retriever import BM25SelfQueryRetriever, RedisRetriever
+from my_notion_companion.utils import load_notion_documents, peek_docs
 
 
 class NotionChatBot:
