@@ -149,7 +149,8 @@ st.markdown(
     """
 #### Appendix: Project Working Log and Feature Tracker
 
-- [Working log](https://fredyang0507.notion.site/MyNotionCompanion-ce12513756784d2ab15015582538825e?pvs=4)
+- [GitHub Homepage](https://github.com/fyang0507/my-notion-companion)
+- [Working Log](https://fredyang0507.notion.site/MyNotionCompanion-ce12513756784d2ab15015582538825e?pvs=4)
 - [Feature Tracker](https://fredyang0507.notion.site/306e21cfd9fa49b68f7160b2f6692f72?v=789f8ef443f44c96b7cc5f0c99a3a773&pvs=4)
 """
 )
