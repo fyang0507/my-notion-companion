@@ -9,6 +9,7 @@ from my_notion_companion.utils import load_notion_documents
 
 
 class RedisIndexBuilder:
+    """Build Redis index."""
 
     def __init__(
         self,

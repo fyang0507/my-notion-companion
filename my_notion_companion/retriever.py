@@ -1,6 +1,6 @@
 import re
 import time
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 import jieba
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -19,6 +19,11 @@ from my_notion_companion.utils import load_test_cases
 
 
 class RedisRetriever:
+    """Semantic-based Redis retriever.
+
+    Have to have redis server running first. `redis-stack-server`.
+    """
+
     def __init__(
         self,
         config: Dict[str, Any],
@@ -37,11 +42,13 @@ class RedisRetriever:
         )
         self.retriever = self.vs.as_retriever()
 
-    def invoke(self, query):
+    def invoke(self, query: str):
         return self.retriever.invoke(query)
 
 
 class BM25SelfQueryRetriever:
+    """Lexical-based BM25 retriever with metadata filter capability."""
+
     def __init__(
         self,
         llm: LlamaCpp,
@@ -116,6 +123,8 @@ class BM25SelfQueryRetriever:
         return splits_matched
 
     def invoke(self, query: str) -> List[Document]:
+        # try to format query with QueryAnalyzer.
+        # If not, search with the original user input
         try:
             query_formatted = self.query_analyzer.invoke(query)
         except RuntimeError:
@@ -128,10 +137,12 @@ class BM25SelfQueryRetriever:
 
 
 class RetrieverEvaluator:
+    """Helper class to evaluate a retriever given test cases."""
+
     def __init__(self, config: Dict[str, Any]) -> None:
         self.test_cases = load_test_cases(config["test_path"])
 
-    def evaluate(self, retriever):
+    def evaluate(self, retriever: Union[RedisRetriever, BM25SelfQueryRetriever]):
         score_list = list()
 
         for case in self.test_cases:

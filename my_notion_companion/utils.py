@@ -15,6 +15,11 @@ from my_notion_companion.notion_loader import NotionLoader
 def load_notion_documents(
     config: Dict[str, Any], tokens: Dict[str, str]
 ) -> List[Document]:
+    """Load notion documents.
+
+    If requires a data pull, it will use NotionLoader to download from Notion databases.
+    Otherwise it will try reading from a local pickle copy.
+    """
     if not config["force_repull"] and os.path.exists(config["path"]["docs"]):
         logger.info("Load data from existing offline copy.")
         with open(config["path"]["docs"], "rb") as f:
@@ -42,8 +47,9 @@ def fix_qwen_padding(s: str) -> str:
     )  # trim anything beyond the EOS indicator [PADxx]
 
 
-def load_test_cases(path: str) -> List[Dict[str, str]]:
-    with open("../data/test_cases.txt") as f:
+def load_test_cases(test_path: str) -> List[Dict[str, str]]:
+    """Load test cases."""
+    with open(test_path) as f:
         raw = f.readlines()
 
     raw = "".join(raw[0::2]).split("问：")[1:]
@@ -54,6 +60,11 @@ def load_test_cases(path: str) -> List[Dict[str, str]]:
 
 
 def format_docs(docs: List[Document]) -> str:
+    """Format a list of docs.
+
+    This function will concat docs' content together with its metadata so LLM has access to all information.
+    """
+
     def format_doc_with_metadata(doc: Document) -> str:
         return "内容：\n" + doc.page_content + "\n\n元数据：\n" + str(doc.metadata)
 
@@ -67,6 +78,7 @@ def format_docs(docs: List[Document]) -> str:
 
 
 def convert_message_to_llm_format(tokenizer: AutoTokenizer, msg: Conversation) -> str:
+    """Use Hugging Face's generalizable chat template function to format conversation history."""
     # https://huggingface.co/docs/transformers/chat_templating
     return tokenizer.apply_chat_template(
         msg, tokenize=False, add_generation_prompt=True
@@ -74,6 +86,7 @@ def convert_message_to_llm_format(tokenizer: AutoTokenizer, msg: Conversation) -
 
 
 def peek_docs(docs: List[Document]) -> str:
+    """A util funciton to print docs, used by logger."""
     result = ""
     for doc in docs:
         result += str(doc.metadata)
