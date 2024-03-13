@@ -9,7 +9,9 @@ st.markdown("## What's under the hood? ⚙️")
 
 st.markdown(
     """
-My Notion Companion is a LLM-powered conversational RAG to chat with documents from Notion. It uses only **open-sourced technologies** and can **run on a single Mac Mini**.
+My Notion Companion is a LLM-powered conversational RAG to chat with documents from Notion.
+It uses hybrid search (lexical + semantic) search to find the relevant documents and a chat interface to interact with the docs.
+It uses only **open-sourced technologies** and can **run on a single Mac Mini**.
 
 Empowering technologies:
 - **The Framework**: uses [Langchain](https://python.langchain.com/docs/)
