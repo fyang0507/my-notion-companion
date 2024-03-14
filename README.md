@@ -26,14 +26,29 @@ My Notion Compnion is here to help me achieve two things:
 - to have an improved search experience across my notion databases (200+ documents)
 - to have a conversation with my Notion documents in natural language
 
-#### The system design
+### The system design
 ![e2e_pipeline](resources/flowchart.png)
 
 See more detailed evaluation and documentation on [Fred's 🤗 space](https://huggingface.co/spaces/fyang0507/my-notion-companion)!
 
 ### Quickstart
+##### Step 1: Install tools required
+The following tools is required to set up the environments:
+1. Conda/Mamba package manager. I used [Micromamba](https://mamba.readthedocs.io/en/latest/user_guide/micromamba.html). Once you have the right distribution, create the virtual env with the provided `env.yml`
+2. LlamaCpp: to enable GPU acceleration, llamacpp has to be installed separately. See the [langchain instruction](https://python.langchain.com/docs/guides/local_llms#llama.cpp) to set up llamacpp in the virtual environment
+3. Redis stack server. Follow the [Redis guide](https://redis.io/docs/install/install-stack/mac-os/) to set up
 
+##### Step 2: Download the LLM
+LlamaCpp accepts any `gguf` binary model files. These files can generally be found in Hugging Face searching `model_name.gguf`. You can choose one you like, but for running on a single machines, I suggest with models <=7B params and a quantized version.
 
+##### Step 3: Create and specify various configurations
+- create new `.token.toml` to specify (in key-value pair) the needed tokens for [notion](https://www.notion.so/my-integrations) and [hugging face](https://huggingface.co/settings/tokens). You will need to generate them on their website
+- create new `.env` (if you want to use LangSmith as observability tool, see their [guide](https://docs.smith.langchain.com/tracing/quick_start), again you need to generate a token on their website)
+- create new `.notion_databases.toml`, you need to specify (in key-value pair) the databases you want to download, see the [langchain guide](https://python.langchain.com/docs/integrations/document_loaders/notiondb)
+- in `.config.toml`, change the `model_path, model_name, model_mapping, embedding_model, redis_schema` params according to the downloaded and used models
+
+##### Step 4: Your chatbot is waiting for you!
+run `bash run.sh` to start the notion companion! Enjoy chatting!
 
 ### References
 - [Working Log](https://fredyang0507.notion.site/MyNotionCompanion-ce12513756784d2ab15015582538825e?pvs=4)
