@@ -26,18 +26,15 @@ My Notion Compnion is here to help me achieve two things:
 - to have an improved search experience across my notion databases (200+ documents)
 - to have a conversation with my Notion documents in natural language
 
-#### The E2E Pipeline
+#### The system design
+![e2e_pipeline](resources/flowchart.png)
 
-- When a user enters a prompt, the assistant will try lexical search first
-  - a query analyzer will analyze the query and extract keywords (for search) and domains (for metadata filtering)
-  - the extracted domains will be compared against the metadata of documents, only those with a matched metadata will be retrieved
-  - the keyword will be segmented into searchable tokens, then further compared against the metadata-filtered documents with BM25 lexical search algorithm
-  - The fetched documents will be subject to a final match checker to ensure relevance
-- If lexical search doesn't return enough documents, the assistant will then try semantic search into the Redis vectorstore. Retrieved docs will also subject the QA by match checker.
-- All retrieved documents will be sent to LLM as part of a system prompt, the LLM will then act as a conversational RAG to chat with the user with knowledges from the provided documents
+See more detailed evaluation and documentation on [Fred's 🤗 space](https://huggingface.co/spaces/fyang0507/my-notion-companion)!
 
-![e2e_pipeline]("resources/flowchart.png")
+### Quickstart
 
-### Installation
 
-###
+
+### References
+- [Working Log](https://fredyang0507.notion.site/MyNotionCompanion-ce12513756784d2ab15015582538825e?pvs=4)
+- [Feature Tracker](https://fredyang0507.notion.site/306e21cfd9fa49b68f7160b2f6692f72?v=789f8ef443f44c96b7cc5f0c99a3a773&pvs=4)
