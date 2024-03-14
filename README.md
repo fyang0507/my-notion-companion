@@ -1,3 +1,5 @@
+##### 👉 Checkout full documentation on my [🤗 Space](https://huggingface.co/spaces/fyang0507/my-notion-companion)
+
 # My Notion Companion 🤖
 ###### A conversational RAG that helps to chat with my (mostly Chinese-based) Notion Databases.
 
