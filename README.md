@@ -1,10 +1,10 @@
-##### 👉 Checkout full documentation on my [🤗 Space](https://huggingface.co/spaces/fyang0507/my-notion-companion)
+##### 👉 Check out full documentation on my [🤗 Space](https://huggingface.co/spaces/fyang0507/my-notion-companion)
 
 # My Notion Companion 🤖
 ###### A conversational RAG that helps to chat with my (mostly Chinese-based) Notion Databases.
 
 My Notion Companion is a LLM-powered conversational RAG to chat with documents from Notion.
-It uses hybrid search (lexical + semantic) search to find the relevant documents and a chat interface to interact with the docs.
+It uses hybrid search (lexical + semantic) to find the relevant documents and a chat interface to interact with the docs.
 It uses only **open-sourced technologies** and can **run on a single Mac Mini**.
 
 
